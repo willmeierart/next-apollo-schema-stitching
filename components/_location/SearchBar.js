@@ -1,8 +1,8 @@
-const Footer = () => (
+const SearchBar = () => (
   <div>
     <div></div>
     <style jsx>{``}</style>
   </div>
 )
 
-export default Footer
+export default SearchBar

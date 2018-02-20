@@ -1,8 +1,10 @@
 import Link from 'next/link'
 
-export default () => (
+const Title = () => (
   <Link href='/'>
-    <div> ZERO </div>
+    <div> Carwash USA Express </div>
     <style jsx>{``}</style>
   </Link>
 )
+
+export default Title
