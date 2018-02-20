@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import debounce from 'lodash.debounce'
-import { binder, geocodeByAddress, geocodeByPlaceId, getLatLng } from '../utils'
+import { geocodeByAddress, geocodeByPlaceId, getLatLng } from './_mapUtils'
+import { binder } from '../../lib/_utils'
 
 export default class SearchBar extends Component {
   constructor (props) {
@@ -152,8 +153,6 @@ export default class SearchBar extends Component {
         })
       })
       this.clearSuggestions()
-    } else {
-      return
     }
   }
 

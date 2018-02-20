@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
-import { binder } from '../utils'
+import { binder } from '../../lib/_utils'
 
 export default class GoogleMap extends Component {
   constructor (props) {

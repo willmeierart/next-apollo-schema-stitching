@@ -1,0 +1,7 @@
+[] prelim
+  [] finish initial scaffolding
+
+[] locations page
+  [] work out nuances of map behavior (meet with Jeremy for UX)
+
+[] once we have wireframes start mocking up pages
