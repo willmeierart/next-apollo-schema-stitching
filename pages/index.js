@@ -11,23 +11,25 @@ import { AzLogo01 } from '../components/assets/ZeroLogos'
 // include boilerplate for global loader dependent on graphql req's:
 class HomePage extends Component {
   render () {
-    <App title='Home'>
-      <div>
-        {/* {allThings1.loading || allThings2.loading ? (
-          <div className='loader-wrapper'>
-            <Loader type='line-spin-fade-loader' active />
-          </div>
-        ) : ( */}
-        <AzLogo01 />
-        {/* )} */}
-      </div>
-      <style jsx>{`
-          {/* .loader-wrapper {
-            width:100%; height:100%;
-            display: flex; justify-content: center; align-items:center;
-          } */}
-      `}</style>
-    </App>
+    return (
+      <App title='Home'>
+        <div>
+          {/* {allThings1.loading || allThings2.loading ? (
+            <div className='loader-wrapper'>
+              <Loader type='line-spin-fade-loader' active />
+            </div>
+          ) : ( */}
+          <AzLogo01 />
+          {/* )} */}
+        </div>
+        <style jsx>{`
+            {/* .loader-wrapper {
+              width:100%; height:100%;
+              display: flex; justify-content: center; align-items:center;
+            } */}
+        `}</style>
+      </App>
+    )
   }
 }
 
