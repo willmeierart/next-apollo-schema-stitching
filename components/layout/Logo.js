@@ -1,6 +1,7 @@
 const Logo = () => (
-  <div className="logo-wrapper">
-    <h1 className="logo">LOGO</h1>
+  <div className='logo-wrapper'>
+    <img src='/CWUE_logo.png' alt='Carwash USA express logo' />
+    <h1 className='logo'>LOGO</h1>
     <style jsx>{`
       .logo-wrapper {
         margin: 0.5em;

@@ -2,7 +2,6 @@ import Link from 'next/link'
 import routes from '../../server/routes'
 
 const TopMenu = () => {
-  console.log(routes);
   const renderList = () => (
     <ul>
       {
@@ -37,6 +36,7 @@ const TopMenu = () => {
         li {
           margin-right: 5em;
           white-space: nowrap;
+          cursor: pointer;
         }
         .account {
           position: absolute;

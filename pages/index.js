@@ -5,8 +5,8 @@
 // import { formatColors } from '../lib/_utils'
 import React, { Component } from 'react'
 // import { connect } from 'react-redux'
-// import App from '../components/App'
 import AppProvider from '../lib/redux/AppProvider'
+// import AppProvider from '../lib/redux/AppProvider'
 // import { AzLogo01 } from '../components/assets/ZeroLogos'
 
 // include boilerplate for global loader dependent on graphql req's:
@@ -14,20 +14,23 @@ export default class HomePage extends Component {
   render () {
     return (
       <AppProvider title='Home'>
-        <div>
-          {/* {allThings1.loading || allThings2.loading ? (
+        {/* <AppProvider title="Home"> */}
+          <div>
+            {/* {allThings1.loading || allThings2.loading ? (
             <div className='loader-wrapper'>
               <Loader type='line-spin-fade-loader' active />
             </div>
           ) : ( */}
-          {/* )} */}
-        </div>
-        <style jsx>{`
-            {/* .loader-wrapper {
+            {/* )} */}
+          </div>
+          <style jsx>{`
+             {
+              /* .loader-wrapper {
               width:100%; height:100%;
               display: flex; justify-content: center; align-items:center;
-            } */}
-        `}</style>
+            } */
+            }`}</style>
+        {/* </AppProvider> */}
       </AppProvider>
     )
   }

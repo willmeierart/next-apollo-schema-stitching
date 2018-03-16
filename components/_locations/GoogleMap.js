@@ -13,9 +13,6 @@ export default class GoogleMap extends Component {
       zoom: this.props.zoom || 8
     }
     binder(this, ['setCenter', 'setMarker', 'setMarkers'])
-  //   this.setCenter = this.setCenter.bind(this)
-  //   this.setMarker = this.setMarker.bind(this)
-  //   this.setMarkers = this.setMarkers.bind(this)
   }
 
   componentWillMount () { this.setCenter() }
@@ -26,15 +23,29 @@ export default class GoogleMap extends Component {
       zoom: this.state.zoom,
       center: this.state.center
     }
-    if (this.props.onIdle)
+    if (this.props.onIdle) {
       window.google.maps.event.addListener(this.map, 'idle', () => 
-        this.props.onIdle(this.map, this.allMarkers)
+        this.props.onIdle(this.map, this.props.markers)
+        // this.props.onIdle(this.map, this.allMarkers)
       )
+    }
     this.setMarkers()
-    // console.log(this.map.setZoom(), this.map.getZoom(), this.map.panTo());
+    this.setState({ markers: this.props.markers })
   }
 
   componentDidUpdate (prevProps, prevState) {
+    // if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
+    //   if (this.map.getZoom() !== this.props.zoom) {
+    //     this.map.setZoom(this.props.zoom)
+    //   }
+    //   if (JSON.stringify(prevProps.center) !== JSON.stringify(this.props.center)) {
+    //     this.map.panTo(this.props.center)
+    //   }
+    //   if (JSON.stringify(this.props.markers) !== JSON.stringify(prevProps.markers)) {
+    //     this.setMarkers()
+    //     // console.log(this.state.markers);
+    //   }
+    // }
     if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
       this.setState({
         markers: this.props.markers || [],
@@ -51,6 +62,7 @@ export default class GoogleMap extends Component {
       }
       if (JSON.stringify(this.state.markers) !== JSON.stringify(prevState.markers)){
         this.setMarkers()
+        // console.log(this.state.markers);
       }
     }
   }
@@ -71,7 +83,8 @@ export default class GoogleMap extends Component {
   }
 
   setMarkers () {
-    this.state.markers.forEach((marker, i) => {
+    // if (this.props.markers !== undefined) {
+    this.props.markers.forEach((marker, i) => {
       if (typeof marker.position === 'string') {
         this.getCoordsFromAddress(marker.position)
           .then(coords => {
@@ -82,26 +95,24 @@ export default class GoogleMap extends Component {
         this.setMarker(marker)
       }
     })
+    // }
   }
 
   setMarker (marker) {
     const m = new window.google.maps.Marker({
       position: marker.position,
-      animation: marker.animation === 'drop'
-        ? window.google.maps.Animation.DROP
-        : marker.animation === 'bounce'
-          ? window.google.maps.Animation.BOUNCE : null,
+      animation: marker.animation,
       title: marker.title,
       label: marker.label,
       map: this.map,
       icon: marker.icon
     })
     window.google.maps.event.addListener(m, 'click', marker.onClick) // this is an important action
-    this.allMarkers.push(m) // needs to somehow clear here
+    // this.allMarkers.push(m) // needs to somehow clear here
   }
 
   getCoordsFromAddress (adr) {
-    const API_KEY = 'AIzaSyDx1N1vkCcwJt-BFELA_OyOMCBg9WAHlJs'
+    const API_KEY = process.env.GOOGLE_MAPS_KEY
     return axios
       .get(`https://maps.googleapis.com/maps/api/geocode/json?address=${adr}&key=${API_KEY}`)
       .then(res => {
@@ -112,9 +123,18 @@ export default class GoogleMap extends Component {
   }
 
   render () {
+    const { width, height } = this.props.dims
     return (
       <div className='map-container'>
-        <div id='map' style={{ width: '100%', height: '100%' }} ref={map => { this.mapDOM = map }}></div>
+        <div id='map' style={{ width: '100%', height: '100%' }} ref={map => { this.mapDOM = map }} />
+        <style jsx>{`
+          .map-container {
+            width: ${width};
+            height: ${height};
+            border-radius: 3px;
+            border: 1px solid black;
+          }
+        `}</style>
       </div>
     )
   }

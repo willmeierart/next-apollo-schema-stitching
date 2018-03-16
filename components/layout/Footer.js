@@ -23,12 +23,12 @@ const Footer = () => {
         <ul className='sub-list'>
           { item.children.map(x => (
             <li key={x.route}>
-              <Link href={x.route}>
+              <Link href={x.route}><span>
                 { x.children === undefined
                   ? x.title
                   : appendChildList(x)
                 }
-              </Link>
+              </span></Link>
             </li>
           )) }
         </ul>
@@ -45,12 +45,12 @@ const Footer = () => {
     <ul className='top-lvl-routes'>
       { routes.map(x => (
         <li key={x.route}>
-          <Link href={x.route}>
+          <Link href={x.route}><span>
             { x.children === undefined
               ? x.title
               : appendChildList(x)
             }
-          </Link>
+          </span></Link>
         </li>
       )) }
       <style jsx>{`
@@ -116,6 +116,7 @@ const Footer = () => {
           float: right;
           width: 50px;
           height: 50px;
+          margin-bottom: 10px;
         }
         .copyright {
           width: 100%;

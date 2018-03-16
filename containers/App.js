@@ -1,7 +1,6 @@
 // main wrapper component - layout, universal styles, etc.
 import React, { Component } from 'react'
-import 'normalize.css'
-import Link from 'next/link'
+// import 'normalize.css'
 import { connect } from 'react-redux'
 import Head from './Head'
 import Header from './layout/Header'
@@ -48,13 +47,13 @@ class App extends Component {
   }
 } 
 
-const mapStateToProps = async state => {
-  return null
-}
+// const mapStateToProps = async state => {
+//   return null
+// }
 
-const mapDispatchToProps = async dispatch => {
-  return null
-}
+// const mapDispatchToProps = async dispatch => {
+//   return null
+// }
 
 // export default connect(mapStateToProps, mapDispatchToProps)(App)
 export default App

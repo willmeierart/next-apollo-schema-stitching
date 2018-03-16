@@ -1,10 +1,10 @@
-import App from '../components/App'
+import AppProvider from '../lib/redux/AppProvider'
 
 const FastPass = () => (
-  <App title='FastPass'>
+  <AppProvider title='FastPass'>
     <div>FastPass</div>
     <style jsx>{``}</style>
-  </App>
+  </AppProvider>
 )
 
 export default FastPass

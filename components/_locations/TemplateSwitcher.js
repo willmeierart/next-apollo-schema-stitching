@@ -1,20 +1,18 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import TemplateInitial from './TemplateInitial'
 import TemplateResults from './TemplateResults'
 import TemplateDetail from './TemplateDetail'
 
-const TemplateSwitcher = ({ template }) => {
+const TemplateSwitcher = ({ template, children }) => {
   const componentSwitcher = () => {
     switch (template) {
       case 'initial':
-        return <TemplateInitial />
+        return <TemplateInitial>{ children }</TemplateInitial>
       case 'results':
-        return <TemplateResults />
+        return <TemplateResults>{ children }</TemplateResults>
       case 'detail':
-        return <TemplateDetail />
+        return <TemplateDetail>{ children }</TemplateDetail>
       default :
-        return <TemplateInitial />
+        return <TemplateInitial>{ children }</TemplateInitial>
     }
   }
   return (
@@ -22,10 +20,6 @@ const TemplateSwitcher = ({ template }) => {
       { componentSwitcher() }
     </div>
   )
-}
-
-TemplateSwitcher.propTypes = {
-
 }
 
 export default TemplateSwitcher

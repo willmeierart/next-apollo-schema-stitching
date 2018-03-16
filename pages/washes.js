@@ -1,10 +1,10 @@
-import App from '../components/App'
+import AppProvider from '../lib/redux/AppProvider'
 
 const Washes = () => (
-  <App title='Washes'>
+  <AppProvider title='Washes'>
     <div>Washes</div>
     <style jsx>{``}</style>
-  </App>
+  </AppProvider>
 )
 
 export default Washes

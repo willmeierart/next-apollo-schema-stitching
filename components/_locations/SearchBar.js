@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import debounce from 'lodash.debounce'
-import { geocodeByAddress, geocodeByPlaceId, getLatLng } from './_mapUtils'
+import { geocodeByAddress, geocodeByPlaceId, getLatLng } from '../../lib/_mapUtils'
 import { binder } from '../../lib/_utils'
 
 export default class SearchBar extends Component {
   constructor (props) {
     super(props)
-    this.state = { autocompleteItems: [], value:'' }
+    this.state = { autocompleteItems: [], value: '', markers: [] }
     binder(this, ['autocompleteCallback',
       'clearSuggestions',
       'fetchPredictions',
@@ -44,6 +44,8 @@ export default class SearchBar extends Component {
   }
 
   autocompleteCallback (predictions, status) {
+    // called by this.fetchPredictions, used as callback to native google autocomplete func
+    // predictions are each full object returned from autocompleteservice
     if (status !== this.autocompleteOK) {
       console.error(status)
       this.clearSuggestions()
@@ -53,13 +55,11 @@ export default class SearchBar extends Component {
       main: format.main_text,
       secondary: format.secondary_text
     })
-    
-
     this.setState({
       autocompleteItems: predictions.map((p, idx) => ({
         suggestion: p.description,
         placeId: p.place_id,
-        active: this.highlightFirstSuggestion && idx === 0 ? true : false,
+        active: this.highlightFirstSuggestion && idx === 0,
         index: idx,
         formattedSuggestion: formattedSuggestion(p.structured_formatting)
       }))
@@ -67,6 +67,7 @@ export default class SearchBar extends Component {
   }
 
   fetchPredictions () {
+    // magical google autocomplete connector function
     const { value } = this.state
     if (value.length) {
       this.autocompleteService.getPlacePredictions(
@@ -79,63 +80,81 @@ export default class SearchBar extends Component {
     }
   }
 
-  clearSuggestions () { this.setState({ autocompleteItems: [] }) }
+  clearSuggestions () {
+    this.setState({ autocompleteItems: [] })
+  }
 
   selectAddress (address, placeId, e) {
+    // called by each handler: enter / mousedown / touchend
     if (e !== undefined) {
       e.preventDefault()
     }
     this.clearSuggestions()
-    this.handleSelect(address, placeId)
+    this.handleSelect(address, placeId) // these are properties on the 'active selection' object
   }
 
-  handleInput (val) {
-    console.log(val);
-    this.setState({ value: val })
-    geocodeByAddress(val).then(res => {
-      console.log(res);
+  handleSelect (address, placeId) {
+    // called right above ^
+    this.props.onSelect
+      ? this.props.onSelect(address, placeId) // this doesn't exist, as far as I know...
+      : this.handleInput(address)
+
+    // MINE: try this here....
+    geocodeByAddress(address).then(res => {
+      // console.log(res)
       if (res.length > 0 && typeof res !== 'string') {
         const markers = []
         res.forEach(place =>
           getLatLng(place).then(latLng => {
-            console.log(latLng);
+            // console.log(latLng)
             const marker = {
               position: latLng,
-              label: '',
               title: place.formatted_address,
               animation: 'drop',
-              onClick: () => { console.log('clicked'); }
+              onClick: () => { console.log('clicked') }
             }
             markers.push(marker)
+            this.props.setCenter(latLng)
           }).then(() => {
             console.log(markers)
-            this.props.setMarkers([])
+            // this.props.setMarkers([])
             this.props.setMarkers(markers)
           })
         )
       } else {
         this.props.setMarkers([])
       }
-    }).catch( err => { console.log(err); })
+    }).catch(err => { console.log(err) })
   }
 
-  handleSelect (address, placeId) {
-    this.props.onSelect
-      ? this.props.onSelect(address, placeId)
-      : this.handleInput(address)
-  }
+  handleInput (val) { this.setState({ value: val }) } // val = address (active selection)
 
   getActiveItem () { return this.state.autocompleteItems.find(item => item.active) }
 
   selectActiveItemAtIndex (index) {
+    // this is what points at a certain item and gets selects that one specifically
     console.log(this.state.autocompleteItems)
     const activeName = this.state.autocompleteItems.find(item => item.index === index).suggestion
-    this.setActiveItemAtIndex(index)
-    this.handleInput(activeName)
+    this.setActiveItemAtIndex(index) // below
+    this.handleInput(activeName) // above
+  }
+
+  setActiveItemAtIndex (index) {
+    this.setState({
+      autocompleteItems: this.state.autocompleteItems.map((item, idx) => {
+        if (idx === index) {
+          return { ...item, active: true }
+        } else {
+          return { ...item, active: false }
+        }
+      })
+    })
   }
 
   handleEnterKey (val) {
+    console.log(val)
     const activeItem = this.getActiveItem()
+    console.log(activeItem)
     if (activeItem === undefined) {
       this.handleEnterKeyWithoutActiveItem(val)
     } else {
@@ -144,6 +163,7 @@ export default class SearchBar extends Component {
   }
 
   handleEnterKeyWithoutActiveItem (val) {
+    console.log('enter no active');
     if (this.props.onEnterKeyDown) {
       geocodeByAddress(val).then(res => {
         console.log(res)
@@ -153,6 +173,8 @@ export default class SearchBar extends Component {
         })
       })
       this.clearSuggestions()
+    } else {
+      this.props.setMarkers([])
     }
   }
 
@@ -206,18 +228,6 @@ export default class SearchBar extends Component {
     // if (this.props.inputProps.onKeyDown) { this.props.inputProps.onKeyDown(event) }
   }
 
-  setActiveItemAtIndex (index) {
-    this.setState({
-      autocompleteItems: this.state.autocompleteItems.map((item, idx) => {
-        if (idx === index) {
-          return { ...item, active: true }
-        } else {
-          return { ...item, active: false }
-        }
-      })
-    })
-  }
-
   handleInputChange (event) {
     const { value } = event.target
     this.handleInput(value)
@@ -225,7 +235,9 @@ export default class SearchBar extends Component {
       this.clearSuggestions()
       return
     }
-    if (this.shouldFetchSuggestions({ value })) { this.debouncedFetchPredictions }
+    if (this.shouldFetchSuggestions({ value })) {
+      this.debouncedFetchPredictions()
+    }
   }
 
   handleInputOnBlur (event) {
@@ -233,7 +245,9 @@ export default class SearchBar extends Component {
     // if (this.props.inputProps.onBlur) { this.props.inputProps.onBlur(event) }
   }
 
-  renderSuggestion () { ({ suggestion }) => <div>{ suggestion }</div> }
+  renderSuggestion ({ suggestion }) {
+    return <div>{ suggestion }</div>
+  }
 
   renderFooter () {}
 
@@ -258,8 +272,8 @@ export default class SearchBar extends Component {
     return (
       <div className='searchbar-wrapper'>
         <div className='searchbar-root'>
-          <input {...inputProps} placeholder='Please enter a location' />
-          { autocompleteItems.length > 0 && (
+          <input className='searchbar-input' {...inputProps} placeholder='Please enter a location' />
+          { /*autocompleteItems.length > 0*/true && (
             <div className='searchbar-autocompleteContainer'>
               { autocompleteItems.map((p, idx) => (
                 <div key={p.placeId} className={p.active ? 'searchbar-autocompleteItemActive' : 'searchbar-autocompleteItem'}
@@ -277,6 +291,57 @@ export default class SearchBar extends Component {
             </div>
           ) }
         </div>
+        <style jsx>{`
+
+          .searchbar-wrapper {
+            margin-bottom: 2vh;
+            width: 100%;
+          }
+
+          .searchbar-root {
+            position: relative;
+            padding-bottom: 0px;
+            z-index: 10;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .searchbar-input {
+            display: inline-block;
+            padding: 10px;
+            width: 50%;
+            left:25%;
+            border-radius: 3px;
+            border: 1px solid black;
+          }
+
+          .searchbar-autocompleteContainer {
+            position: absolute;
+            top: 99%;
+            background-color: white;
+            border: 1px solid #555555;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+          };
+          .searchbar-autocompleteItem{
+            background-color: #ffffff;
+          }
+          .searchbar-autocompleteItem, 
+          .searchbar-autocompleteItemActive {
+            {/* height: 20px; */}
+            padding: 10px;
+            {/* color: #555555; */}
+            color:black;
+            cursor: pointer;
+          };
+          .searchbar-autocompleteItemActive {
+            background-color: #fafafa;
+          }
+
+        `}</style>
       </div>
     )
   }

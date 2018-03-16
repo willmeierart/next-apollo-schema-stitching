@@ -1,48 +1,53 @@
 // just in case custom routing comes into play
+
 const routes = [
+  {
+    title: 'Home',
+    route: '/'
+  },
   {
     title: 'Car Washes',
     route: '/washes',
     children: [
       {
         title: 'Exterior Washes',
-        route: '/washes/#exterior',
+        route: '/washes/exterior',
         children: [
           {
             title: 'Wash Packs',
-            route: '/washes/#exterior-wash-packs'
+            route: '/washes/exterior-wash-packs'
           },
           {
             title: 'Fast Pass',
-            route: '/washes/#exterior-fast-pass'
+            route: '/washes/exterior-fast-pass'
           }
         ]
       },
       {
         title: 'Full Service',
-        route: '/washes/#full-service',
+        route: '/washes/full-service',
         children: [
           {
             title: 'Fast Pass',
-            route: '/washes/#full-service-fast-pass'
+            route: '/washes/full-service-fast-pass'
           }
         ]
       },
       {
         title: 'Express Detail',
-        route: '/washes/#express-detail'
+        route: '/washes/express-detail'
       },
       {
         title: 'Gift Cards',
-        route: '/washes/#gift-cards'
+        route: '/washes/gift-cards'
       },
       {
         title: 'Fleet Accounts',
-        route: '/washes/#fleet-accounts'
+        route: '/washes/fleet-accounts'
       },
       {
         title: 'Specials',
-        route: '/washes/#specials'
+        route: '/washes/specials'
       }
     ]
   },
@@ -52,11 +57,11 @@ const routes = [
     children: [
       {
         title: 'Compare Plans',
-        route: '/fastpass/#compare'
+        route: '/fastpass/compare'
       },
       {
         title: 'Manage your account',
-        route: '/fastpass/#manage'
+        route: '/fastpass/manage'
       }
     ]
   },
@@ -66,27 +71,27 @@ const routes = [
     children: [
       {
         title: 'Company',
-        route: '/about/#company'
+        route: '/about/company'
       },
       {
         title: 'Testimonials',
-        route: '/about/#testimonials'
+        route: '/about/testimonials'
       },
       {
         title: 'News',
-        route: '/about/#news'
+        route: '/about/news'
       },
       {
         title: 'Careers',
-        route: '/about/#careers'
+        route: '/about/careers'
       },
       {
         title: 'FAQ',
-        route: '/about/#FAQ'
+        route: '/about/FAQ'
       },
       {
         title: 'Contact',
-        route: '/about/#contact'
+        route: '/about/contact'
       }
     ]
   },
@@ -100,14 +105,14 @@ const routes = [
     children: [
       {
         title: 'Fast Pass',
-        route: '/my-account/#fast-pass'
+        route: '/my-account/fast-pass'
       },
       {
         title: 'Gift Cards',
-        route: '/my-account/#gift-cards'
+        route: '/my-account/gift-cards'
       }
     ]
   }
 ]
 
-export default routes
+module.exports = routes
