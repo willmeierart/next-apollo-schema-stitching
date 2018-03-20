@@ -86,8 +86,8 @@ const Footer = () => {
           display: flex;
           flex-direction: column;
           flex-grow: 1;
-          position: absolute;
-          bottom: 0;
+          {/* position: absolute;
+          bottom: 0; */}
         }
         .footer-content-wrapper {
           position: relative;

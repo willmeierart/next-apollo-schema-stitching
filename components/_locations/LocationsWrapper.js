@@ -12,13 +12,30 @@ class LocationsWrapper extends Component {
     this.state = { template: 'initial' } // [initial, results, detail]
     binder(this, ['setTemplate', 'setCenter', 'setMarkers'])
   }
+
   componentDidMount () {
-    this.props.onGetUserLocation()
+    if (this.props.userLocation !== null || this.props.userLocation !== 'denied') {
+      this.setState({ template: /* 'results' */ 'detail' })
+    }
+    console.log(this.state.template)
+  }
+
+  componentDidUpdate (prevProps) {
+    if (this.props.userLocation !== prevProps.userLocation && typeof this.props.userLocation === 'object' ) {
+      this.setState({ template: /* 'results' */ 'detail' })
+    }
   }
 
   setTemplate (template) {
     if (template === 'initial' || template === 'results' || template === 'detail') {
       this.setState({ template })
+    } else {
+      if (this.state.template === 'initial') {
+        this.setState({ template: 'detail' })
+      } else {
+        this.setState({ template: 'results' })
+      }
+      console.warn('not a valid template state... \n ...attempting default switch')
     }
   }
 
@@ -33,11 +50,11 @@ class LocationsWrapper extends Component {
   }
 
   render () {
-    const { mapCenter, mapZoom, mapMarkers } = this.props
+    const { mapCenter, mapZoom, mapMarkers, onGetUserLocation, userLocation } = this.props
     const { template } = this.state
     const getMapDims = template => {
       const large = { width: '96vw', height: '40vw' }
-      const small =  { width: '40vw', height: '40vw' }
+      const small = { width: '40vw', height: '40vw' }
       switch (template) {
         case 'initial' :
           return large
@@ -49,10 +66,10 @@ class LocationsWrapper extends Component {
     }
     return (
       <div>
-        <TemplateSwitcher template={template}>
-          <h1>Location</h1>
-          <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} />
-          <GoogleMap center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(template)} />
+        <TemplateSwitcher template={template} onGetUserLocation={onGetUserLocation} userLocation={userLocation} >
+          <h1>LOCATIONS</h1>
+          <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} setTemplate={this.setTemplate} />
+          <GoogleMap center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(template)} setTemplate={this.setTemplate} />
         </TemplateSwitcher>
         <style jsx>{``}</style>
       </div>
@@ -72,7 +89,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    onGetUserLocation: () => dispatch(getUserLocation()),
+    onGetUserLocation: path => dispatch(getUserLocation(path)),
     onsetMapCenter: center => dispatch(setMapCenter(center)),
     onsetMapZoom: zoom => dispatch(setMapZoom(zoom)),
     onsetMapMarkers: markers => dispatch(setMapMarkers(markers))

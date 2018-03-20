@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
 import { binder } from '../../lib/_utils'
+import locData from '../../lib/_data/carwashUSAexpressAddresses'
 
 export default class GoogleMap extends Component {
   constructor (props) {
@@ -9,28 +10,38 @@ export default class GoogleMap extends Component {
     this.allMarkers = []
     this.state = {
       center: null,
-      markers: this.props.markers || [],
-      zoom: this.props.zoom || 8
+      // markers: this.props.markers || [],
+      zoom: this.props.zoom || 8,
+      bounds: null
     }
-    binder(this, ['setCenter', 'setMarker', 'setMarkers'])
+    binder(this, ['setCenter', 'setMarker', 'setMarkers', 'setCenterViaMarkers', 'setBounds'])
   }
 
-  componentWillMount () { this.setCenter() }
+  // componentWillMount () { this.setCenter() }
 
   componentDidMount () {
     const mapNode = ReactDOM.findDOMNode(this.mapDOM)
     this.map = new window.google.maps.Map(mapNode), {
       zoom: this.state.zoom,
-      center: this.state.center
+      center: this.state.center,
+      disableDefaultUI: true,
+      zoomControl: false,
+      mapTypeControl: false,
+      scaleControl: false,
+      streetViewControl: false,
+      rotateControl: false,
+      fullscreenControl: false
     }
     if (this.props.onIdle) {
-      window.google.maps.event.addListener(this.map, 'idle', () => 
+      window.google.maps.event.addListener(this.map, 'idle', () =>
         this.props.onIdle(this.map, this.props.markers)
         // this.props.onIdle(this.map, this.allMarkers)
       )
     }
-    this.setMarkers()
-    this.setState({ markers: this.props.markers })
+    // this.setMarkers()
+    // this.setState({ markers: this.props.markers })
+    this.setCenterViaMarkers(locData)
+    console.log(this.state.center)
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -57,28 +68,68 @@ export default class GoogleMap extends Component {
       if (this.map.getZoom() !== this.state.zoom){
         this.map.setZoom(this.state.zoom)
       }
-      if (JSON.stringify(prevState.center) !== JSON.stringify(this.state.center)){
+      if (JSON.stringify(prevState.center) !== JSON.stringify(this.state.center)) {
         this.map.panTo(this.state.center)
       }
-      if (JSON.stringify(this.state.markers) !== JSON.stringify(prevState.markers)){
-        this.setMarkers()
+      if (JSON.stringify(this.state.markers) !== JSON.stringify(prevState.markers)) {
+        // this.setMarkers()
         // console.log(this.state.markers);
       }
     }
   }
 
-  setCenter () {
-    if (this.props.center) {
-      if (typeof this.props.center === 'string') {
-        this.getCoordsFromAddress(this.props.center)
-          .then(coords => {
-            this.setState({ center: coords })
-          })
-      } else {
-        this.setState({ center: this.props.center })
-      }
+  setBounds (marker) {
+    const mainAction = () => {
+      if (marker) this.setState({ bounds: this.state.bounds.extend(marker) })
+      this.map.fitBounds(this.state.bounds)
+      console.log(this.state.bounds)
+    }
+    if (!this.state.bounds) {
+      this.setState({ bounds: new window.google.maps.LatLngBounds() }, mainAction)
     } else {
-      this.setState({ center: {lat: 39.740287, lng: -104.971806} })
+      mainAction()
+    }
+  }
+
+  setCenterViaMarkers (markers) {
+    let maxLat = null
+    let minLat = null
+    let maxLng = null
+    let minLng = null
+   
+    const markerCenter = markers.reduce((obj, marker) => {
+      if (maxLat === null || marker.coords.lat > maxLat) maxLat = marker.coords.lat
+      if (minLat === null || marker.coords.lat < minLat) minLat = marker.coords.lat
+      if (maxLng === null || marker.coords.lng > maxLng) maxLng = marker.coords.lng
+      if (minLng === null || marker.coords.lng < minLng) minLng = marker.coords.lng
+      obj.coords.lat = parseFloat(((maxLat + minLat) / 2).toFixed(5))
+      obj.coords.lng = parseFloat(((maxLng + minLng) / 2).toFixed(5))
+      // console.log(maxLat, maxLng)
+      // console.log(coords);
+      this.setBounds(marker.coords)
+      return obj
+    }, { coords: { lat: 0, lng: 0 } })
+    console.log(markerCenter)
+    this.setCenter(markerCenter.coords)
+  }
+
+  setCenter (center) {
+    if (center) {
+      this.setState({ center })
+    } else {
+      if (this.props.center) {
+        if (typeof this.props.center === 'string') {
+          console.log(this.props.center)
+          this.getCoordsFromAddress(this.props.center)
+            .then(coords => {
+              this.setState({ center: coords })
+            })
+        } else {
+          this.setState({ center: this.props.center })
+        }
+      } else {
+        this.setState({ center: {lat: 39.740287, lng: -104.971806} })
+      }
     }
   }
 
@@ -116,7 +167,7 @@ export default class GoogleMap extends Component {
     return axios
       .get(`https://maps.googleapis.com/maps/api/geocode/json?address=${adr}&key=${API_KEY}`)
       .then(res => {
-        console.log(res.data.results[0].geometry.location);
+        console.log(res.data.results[0].geometry.location)
         return res.data.results[0].geometry.location
       })
       .catch(err => console.error(err))

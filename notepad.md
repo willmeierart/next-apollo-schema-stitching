@@ -6,7 +6,10 @@
 
 [] update files to reflect latest starter project
 [x] model content in graphcms
-[] start modeling queries to graphcms
+[x] start modeling queries to graphcms
+
+
+[] finish udemy graphql course
 
 
 

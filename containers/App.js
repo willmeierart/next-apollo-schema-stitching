@@ -2,9 +2,9 @@
 import React, { Component } from 'react'
 // import 'normalize.css'
 import { connect } from 'react-redux'
-import Head from './Head'
-import Header from './layout/Header'
-import Footer from './layout/Footer'
+import Head from '../components/Head'
+import Header from '../components/layout/Header'
+import Footer from '../components/layout/Footer'
 
 // import globalStyles from '../../styles/index.scss'
 
@@ -23,6 +23,7 @@ class App extends Component {
         <style jsx global>{`
           body {
             width: 100%;
+            height: 100%;
             padding: 0;
             margin: 0;
             font-family: sans-serif;

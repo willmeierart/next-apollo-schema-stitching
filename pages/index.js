@@ -8,6 +8,7 @@ import React, { Component } from 'react'
 import AppProvider from '../lib/redux/AppProvider'
 // import AppProvider from '../lib/redux/AppProvider'
 // import { AzLogo01 } from '../components/assets/ZeroLogos'
+import HomeWrapper from '../components/_home-global/HomeWrapper'
 
 // include boilerplate for global loader dependent on graphql req's:
 export default class HomePage extends Component {
@@ -22,6 +23,7 @@ export default class HomePage extends Component {
             </div>
           ) : ( */}
             {/* )} */}
+            <HomeWrapper />
           </div>
           <style jsx>{`
              {

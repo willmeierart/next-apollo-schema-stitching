@@ -41,6 +41,8 @@ export default class SearchBar extends Component {
     }
     this.autocompleteService = new window.google.maps.places.AutocompleteService()
     this.autocompleteOK = window.google.maps.places.PlacesServiceStatus.OK
+
+    this.distanceService = new window.google.maps.DistanceMatrixService()
   }
 
   autocompleteCallback (predictions, status) {
@@ -156,26 +158,15 @@ export default class SearchBar extends Component {
     const activeItem = this.getActiveItem()
     console.log(activeItem)
     if (activeItem === undefined) {
-      this.handleEnterKeyWithoutActiveItem(val)
+      this.handleEnterKeyWithoutActiveItem()
     } else {
       this.selectAddress(activeItem.suggestion, activeItem.placeId)
     }
   }
 
-  handleEnterKeyWithoutActiveItem (val) {
-    console.log('enter no active');
-    if (this.props.onEnterKeyDown) {
-      geocodeByAddress(val).then(res => {
-        console.log(res)
-        getLatLng(res[0]).then(latLng => {
-          console.log(latLng)
-          this.props.setCenter(latLng)
-        })
-      })
-      this.clearSuggestions()
-    } else {
-      this.props.setMarkers([])
-    }
+  handleEnterKeyWithoutActiveItem () {
+    console.log('no active item')
+    this.props.setMarkers([])
   }
 
   handleDownKey () {
@@ -296,6 +287,7 @@ export default class SearchBar extends Component {
           .searchbar-wrapper {
             margin-bottom: 2vh;
             width: 100%;
+            display: flex;
           }
 
           .searchbar-root {

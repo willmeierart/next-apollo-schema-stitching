@@ -13,7 +13,7 @@ const CustomHead = (props = initialProps) => {
     <meta key='charSet' charSet='utf-8' />
     <meta key='viewport' name='viewport' content={`inital-scale=${initialScale || initialProps.initialScale}, width=device-width, shrink-to-fit=no`} />
     <meta key='meta-title' name='title' content='Carwash USA Express' />
-    <link rel='shortcut icon' href='/zero.ico' />
+    <link rel='shortcut icon' href='/static/favicon.ico' />
     <script defer src='https://use.fontawesome.com/releases/v5.0.6/js/all.js' />
     { children }
     {/* <script key='google-map' type="text/javascript" src=`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_KEY}&libraries=places` async defer /> */}
