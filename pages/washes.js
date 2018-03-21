@@ -1,8 +1,9 @@
 import AppProvider from '../lib/redux/AppProvider'
+import TopSubMenu from '../components/layout/TopSubMenu'
 
 const Washes = ({ url }) => (
   <AppProvider title='Washes'>
-    <div>{ JSON.stringify(url) }</div>
+    <TopSubMenu url={url} />
     <style jsx>{``}</style>
   </AppProvider>
 )

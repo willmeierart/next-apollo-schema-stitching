@@ -76,10 +76,10 @@ const routes = [
   }
 ]
 
-const urlPrettifier = new UrlPrettifier(routes)
-// const urlPrettifier = new UrlPrettifier(routes, {
-//   paramsToQueryString: (params) => params.query ? `?${qs.stringify(params.query)}` : ''
-// })
+// const urlPrettifier = new UrlPrettifier(routes)
+const urlPrettifier = new UrlPrettifier(routes, {
+  paramsToQueryString: (params) => params.query ? `?${qs.stringify(params.query)}` : ''
+})
 
 exports.routes = routes
 exports.Router = urlPrettifier

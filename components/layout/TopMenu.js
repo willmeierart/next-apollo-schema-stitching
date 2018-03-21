@@ -9,19 +9,19 @@ const TopMenu = () => {
           switch (route.title) {
             case ('Car Washes') :
               return (
-                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
               )
             case ('Fast Pass - Unlimited') :
               return (
-                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
               )
             case ('About') :
               return (
-                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
               )
             case 'Locations' :
               return (
-                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='locations'>FIND A LOCATION</span></Link></li>
+                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='locations'>FIND A LOCATION</span></Link></li>
               )
             case 'My Account' :
               return (

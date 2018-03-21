@@ -1,9 +1,6 @@
 import { Link } from 'next-url-prettifier'
-import { routes, Router } from '../../server/routes'
+import { Router, routes } from '../../server/routes'
 import { AzLogo01 } from '../assets/ZeroLogos'
-import NextRouter from 'next/router'
-
-NextRouter.onRouteChangeStart = url => { console.log(url) }
 
 const Footer = () => {
   const socials = [ { type: 'facebook', link: '' }, { type: 'twitter', link: '' } ]
@@ -26,7 +23,7 @@ const Footer = () => {
         <ul className='sub-list'>
           { route.children.map(child => (
             <li key={child.title}>
-              <Link route={Router.linkPage(route.page, { title: child.title })}>
+              <Link prefetch route={Router.linkPage(route.page, { title: child.title })}>
                 <span>{ child.title }</span>
               </Link>
             </li>
@@ -44,7 +41,7 @@ const Footer = () => {
     <ul className='top-lvl-routes'>
       { routes.map(route => (
         <li key={route.prettyUrl}>
-          <Link route={Router.linkPage(route.page, { title: route.title })}>
+          <Link prefetch route={Router.linkPage(route.page, { title: route.title })}>
             <span>{ route.title }</span>
           </Link>
           { route.children && appendChildList(route) }

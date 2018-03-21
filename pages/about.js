@@ -1,10 +1,14 @@
+import React, { Component } from 'react'
 import AppProvider from '../lib/redux/AppProvider'
+import AboutWrapper from '../components/_about/AboutWrapper'
 
-const About = ({ url }) => (
-  <AppProvider url={url} title='About'>
-    <div>{JSON.stringify(url)}</div>
-    <style jsx>{``}</style>
-  </AppProvider>
-)
-
-export default About
+export default class About extends Component {
+  render () {
+    return (
+      <AppProvider title='About'>
+        <AboutWrapper url={this.props.url} />
+        <style jsx>{``}</style>
+      </AppProvider>
+    )
+  }
+}
