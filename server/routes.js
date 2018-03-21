@@ -1,118 +1,85 @@
-// just in case custom routing comes into play
+const UrlPrettifier = require('next-url-prettifier').default
+const qs = require('qs')
 
 const routes = [
   {
+    page: 'index',
     title: 'Home',
-    route: '/'
+    prettyUrl: '/'
   },
   {
+    page: 'washes',
     title: 'Car Washes',
-    route: '/washes',
+    prettyUrl: ({ title }) => {
+      // console.log(title)
+      const root = title === 'Car Washes'
+      return root
+        ? '/washes'
+        : `/washes/${title.toLowerCase().replace(' ', '-')}`
+    },
+    prettyUrlPatterns: [
+      { pattern: '/washes/:title', defaultParams: {} }
+    ],
     children: [
-      {
-        title: 'Exterior Washes',
-        route: '/washes/exterior',
-        children: [
-          {
-            title: 'Wash Packs',
-            route: '/washes/exterior-wash-packs'
-          },
-          {
-            title: 'Fast Pass',
-            route: '/washes/exterior-fast-pass'
-          }
-        ]
-      },
-      {
-        title: 'Full Service',
-        route: '/washes/full-service',
-        children: [
-          {
-            title: 'Fast Pass',
-            route: '/washes/full-service-fast-pass'
-          }
-        ]
-      },
-      {
-        title: 'Express Detail',
-        route: '/washes/express-detail'
-      },
-      {
-        title: 'Gift Cards',
-        route: '/washes/gift-cards'
-      },
-      {
-        title: 'Fleet Accounts',
-        route: '/washes/fleet-accounts'
-      },
-      {
-        title: 'Specials',
-        route: '/washes/specials'
-      }
+      { title: 'Exterior Washes' },
+      { title: 'Full Service' },
+      { title: 'Express Detail' },
+      { title: 'Fleet Accounts' },
+      { title: 'Specials' }
     ]
   },
   {
+    page: 'fastpass',
     title: 'Fast Pass - Unlimited',
-    route: '/fastpass',
-    children: [
-      {
-        title: 'Compare Plans',
-        route: '/fastpass/compare'
-      },
-      {
-        title: 'Manage your account',
-        route: '/fastpass/manage'
-      }
-    ]
+    prettyUrl: '/fastpass'
   },
   {
+    page: 'about',
     title: 'About',
-    route: '/about',
+    prettyUrl: ({ title }) => {
+      const root = title === 'About'
+      return root
+        ? '/about/company'
+        : `/about/${title.toLowerCase()}`
+    },
+    prettyUrlPatterns: [
+      { pattern: '/about/:title', defaultParams: {} }
+    ],
     children: [
-      {
-        title: 'Company',
-        route: '/about/company'
-      },
-      {
-        title: 'Testimonials',
-        route: '/about/testimonials'
-      },
-      {
-        title: 'News',
-        route: '/about/news'
-      },
-      {
-        title: 'Careers',
-        route: '/about/careers'
-      },
-      {
-        title: 'FAQ',
-        route: '/about/FAQ'
-      },
-      {
-        title: 'Contact',
-        route: '/about/contact'
-      }
+      { title: 'Company' },
+      { title: 'Testimonials' },
+      { title: 'News' },
+      { title: 'Careers' },
+      { title: 'FAQ' },
+      { title: 'Contact' }
     ]
   },
   {
+    page: 'locations',
     title: 'Locations',
-    route: '/locations'
+    prettyUrl: ({ state = '', query = '' }) => {
+      switch (state) {
+        default:
+          return '/locations'
+      }
+    }
   },
   {
+    page: null,
     title: 'My Account',
-    route: '/my-account',
-    children: [
-      {
-        title: 'Fast Pass',
-        route: '/my-account/fast-pass'
-      },
-      {
-        title: 'Gift Cards',
-        route: '/my-account/gift-cards'
-      }
-    ]
+    prettyUrl: '/my-account'
+  },
+  {
+    page: 'legal',
+    title: 'Legal',
+    prettyUrl: '/legal'
   }
 ]
 
-module.exports = routes
+const urlPrettifier = new UrlPrettifier(routes)
+// const urlPrettifier = new UrlPrettifier(routes, {
+//   paramsToQueryString: (params) => params.query ? `?${qs.stringify(params.query)}` : ''
+// })
+
+exports.routes = routes
+exports.Router = urlPrettifier

@@ -1,8 +1,8 @@
 import AppProvider from '../lib/redux/AppProvider'
 
-const About = () => (
-  <AppProvider title='About'>
-    <div>About</div>
+const About = ({ url }) => (
+  <AppProvider url={url} title='About'>
+    <div>{JSON.stringify(url)}</div>
     <style jsx>{``}</style>
   </AppProvider>
 )

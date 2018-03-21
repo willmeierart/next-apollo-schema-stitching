@@ -1,8 +1,11 @@
 import Document, { Head, Main, NextScript } from 'next/document'
+import flush from 'styled-jsx/server'
 
 export default class CustomDocument extends Document {
-  static async getInitialProps (ctx) {
-    return await Document.getInitialProps(ctx)
+  static getInitialProps ({ renderPage }) {
+    const { html, head, errorHtml, chunks } = renderPage()
+    const styles = flush()
+    return { html, head, errorHtml, chunks, styles }
   }
   render () {
     return (

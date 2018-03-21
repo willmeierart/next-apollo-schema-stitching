@@ -1,17 +1,11 @@
-## prelim
-[x] finish initial scaffolding
-[x] locations page
-  [x] work out nuances of map behavior (meet with Jeremy for UX)
-[] once we have wireframes start mocking up pages
+## active
+[] find out about which menu items have dropdowns
+[] research SEO of franchises
+  [] work out EXACTLY what routing schema 
 
-[] update files to reflect latest starter project
-[x] model content in graphcms
-[x] start modeling queries to graphcms
-
+[] restrict google maps key
 
 [] finish udemy graphql course
-
-
 
 ## meeting 03/15/18
 - all sites together
@@ -46,4 +40,23 @@
 - *is the map interactive on any of these pages? if so, how?*
 - so a list of **locations** queries:
   - ALL backend endpoints 
-    
+
+
+## locations routing / SEO / etc...
+- notes
+  - does results page have to be dynamic? i.e. results/denver
+    - or can it just be querystring of search (because search could be anything)
+      - if you have a querystring, you could still have dynamic /:routes also, right? (structurally)
+      - is the query string reverse-parseable
+    - or is it just always results and holds state based on your previous search
+      - will redirect to init if you've never visited
+  - how many levels deep does url need to go
+
+- approaches
+  - a
+    - locations >> (init)
+    - locations/search?=whatever-search-was
+    - locations?
+    - locations/results/:id
+      - id === [state] >> return state results
+      - id === [name]  >> return specific page

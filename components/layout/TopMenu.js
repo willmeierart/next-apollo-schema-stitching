@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import routes from '../../server/routes'
+import { Link } from 'next-url-prettifier'
+import { Router, routes } from '../../server/routes'
 
 const TopMenu = () => {
   const renderList = () => (
@@ -7,21 +7,29 @@ const TopMenu = () => {
       {
         routes.map(route => {
           switch (route.title) {
-            case ('Car Washes' || 'Fast Pass - Unlimited' || 'About') :
+            case ('Car Washes') :
               return (
-                <li key={route.route}><Link href={route.route}><span className='standard'><a>{ route.title }</a></span></Link></li>
+                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+              )
+            case ('Fast Pass - Unlimited') :
+              return (
+                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+              )
+            case ('About') :
+              return (
+                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
               )
             case 'Locations' :
               return (
-                <li key={route.route}><Link href={route.route}><span className='locations'><a>FIND A LOCATION</a></span></Link></li>
+                <li key={route.prettyUrl}><Link route={Router.linkPage(route.page, { title: route.title })}><span className='locations'>FIND A LOCATION</span></Link></li>
               )
             case 'My Account' :
               return (
-                <li key={route.route}><Link href={route.route}><span className='account'><a>{ route.title }</a></span></Link></li>
+                <li key={route.prettyUrl}><a href=''><span className='account'>{ route.title }</span></a></li>
               )
             default :
               return (
-                <li key={route.route}><Link href={route.route}><span className='standard'><a>{ route.title }</a></span></Link></li>
+                <li key={route.prettyUrl} />
               )
           }
         })

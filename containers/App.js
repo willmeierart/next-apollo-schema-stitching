@@ -14,7 +14,7 @@ class App extends Component {
     const { title, children } = this.props
     return (
       <div className='App'>
-        <Head title={title} />
+        {/* <Head title={title} /> */}
         <div>
           <Header />
           <main>{ children }</main>

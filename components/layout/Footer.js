@@ -1,6 +1,9 @@
-import routes from '../../server/routes'
-import Link from 'next/link'
+import { Link } from 'next-url-prettifier'
+import { routes, Router } from '../../server/routes'
 import { AzLogo01 } from '../assets/ZeroLogos'
+import NextRouter from 'next/router'
+
+NextRouter.onRouteChangeStart = url => { console.log(url) }
 
 const Footer = () => {
   const socials = [ { type: 'facebook', link: '' }, { type: 'twitter', link: '' } ]
@@ -17,24 +20,20 @@ const Footer = () => {
     )
   })
 
-  const appendChildList = item => {
+  const appendChildList = route => {
     return (
-      <div> { item.title }
+      <div>
         <ul className='sub-list'>
-          { item.children.map(x => (
-            <li key={x.route}>
-              <Link href={x.route}><span>
-                { x.children === undefined
-                  ? x.title
-                  : appendChildList(x)
-                }
-              </span></Link>
+          { route.children.map(child => (
+            <li key={child.title}>
+              <Link route={Router.linkPage(route.page, { title: child.title })}>
+                <span>{ child.title }</span>
+              </Link>
             </li>
           )) }
         </ul>
         <style jsx>{`
           .sub-list li {
-            {/* cursor: pointer; */}
             font-weight: normal;
           }
         `}</style>
@@ -43,14 +42,12 @@ const Footer = () => {
   }
   const renderNav = routes => (
     <ul className='top-lvl-routes'>
-      { routes.map(x => (
-        <li key={x.route}>
-          <Link href={x.route}><span>
-            { x.children === undefined
-              ? x.title
-              : appendChildList(x)
-            }
-          </span></Link>
+      { routes.map(route => (
+        <li key={route.prettyUrl}>
+          <Link route={Router.linkPage(route.page, { title: route.title })}>
+            <span>{ route.title }</span>
+          </Link>
+          { route.children && appendChildList(route) }
         </li>
       )) }
       <style jsx>{`

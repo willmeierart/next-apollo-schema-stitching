@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
 import { binder } from '../../lib/_utils'
-import locData from '../../lib/_data/carwashUSAexpressAddresses'
+import locData from '../../lib/_data/locData'
 
 export default class GoogleMap extends Component {
   constructor (props) {
@@ -20,28 +20,36 @@ export default class GoogleMap extends Component {
   // componentWillMount () { this.setCenter() }
 
   componentDidMount () {
-    const mapNode = ReactDOM.findDOMNode(this.mapDOM)
-    this.map = new window.google.maps.Map(mapNode), {
-      zoom: this.state.zoom,
-      center: this.state.center,
-      disableDefaultUI: true,
-      zoomControl: false,
-      mapTypeControl: false,
-      scaleControl: false,
-      streetViewControl: false,
-      rotateControl: false,
-      fullscreenControl: false
+    const init = () => {
+      if (!window.google) {
+        console.log('no google')
+        setTimeout(init, 500)
+      } else {
+        const mapNode = ReactDOM.findDOMNode(this.mapDOM)
+        this.map = new window.google.maps.Map(mapNode), {
+          zoom: this.state.zoom,
+          center: this.state.center,
+          disableDefaultUI: true,
+          zoomControl: false,
+          mapTypeControl: false,
+          scaleControl: false,
+          streetViewControl: false,
+          rotateControl: false,
+          fullscreenControl: false
+        }
+        if (this.props.onIdle) {
+          window.google.maps.event.addListener(this.map, 'idle', () =>
+            this.props.onIdle(this.map, this.props.markers)
+            // this.props.onIdle(this.map, this.allMarkers)
+          )
+        }
+        // this.setMarkers()
+        // this.setState({ markers: this.props.markers })
+        this.setCenterViaMarkers(locData)
+        console.log(this.state.center)
+      }
     }
-    if (this.props.onIdle) {
-      window.google.maps.event.addListener(this.map, 'idle', () =>
-        this.props.onIdle(this.map, this.props.markers)
-        // this.props.onIdle(this.map, this.allMarkers)
-      )
-    }
-    // this.setMarkers()
-    // this.setState({ markers: this.props.markers })
-    this.setCenterViaMarkers(locData)
-    console.log(this.state.center)
+    init()
   }
 
   componentDidUpdate (prevProps, prevState) {

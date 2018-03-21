@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
+import Router from 'next/router'
 import { connect } from 'react-redux'
-import { getUserLocation, setMapZoom, setMapMarkers, setMapCenter } from '../../lib/redux/actions'
+import { getUserLocation, setMapZoom, setMapMarkers, setMapCenter, setActiveLocation } from '../../lib/redux/actions'
 import TemplateSwitcher from './TemplateSwitcher'
 import GoogleMap from './GoogleMap'
 import SearchBar from './SearchBar'
@@ -10,19 +11,36 @@ class LocationsWrapper extends Component {
   constructor (props) {
     super(props)
     this.state = { template: 'initial' } // [initial, results, detail]
-    binder(this, ['setTemplate', 'setCenter', 'setMarkers'])
+    binder(this, ['setTemplate', 'setCenter', 'setMarkers', 'setPageState'])
   }
 
   componentDidMount () {
+    this.setPageState()
+    console.log(this.props.url);
+  }
+
+  componentWillUnmount () {
+    Router.onRouteChangeComplete = url => { this.props.onSetActiveLocation(null) }
+  }
+
+  setPageState () {
     if (this.props.userLocation !== null || this.props.userLocation !== 'denied') {
-      this.setState({ template: /* 'results' */ 'detail' })
+      if (this.props.activeLocation) {
+        this.setState({ template: 'detail' })
+      } else {
+        this.setState({ template: 'results' })
+      }
     }
     console.log(this.state.template)
   }
 
   componentDidUpdate (prevProps) {
-    if (this.props.userLocation !== prevProps.userLocation && typeof this.props.userLocation === 'object' ) {
-      this.setState({ template: /* 'results' */ 'detail' })
+    if (
+      (this.props.userLocation !== prevProps.userLocation &&
+      typeof this.props.userLocation === 'object') ||
+      this.props.activeLocation !== prevProps.activeLocation
+    ) {
+      this.setPageState()
     }
   }
 
@@ -41,16 +59,16 @@ class LocationsWrapper extends Component {
 
   setCenter (center) { 
     this.setState({ center })
-    this.props.onsetMapCenter(center)
+    this.props.onSetMapCenter(center)
   }
   setMarkers (markers) {
     console.log(markers);
     this.setState({ markers })
-    this.props.onsetMapMarkers(markers)
+    this.props.onSetMapMarkers(markers)
   }
 
   render () {
-    const { mapCenter, mapZoom, mapMarkers, onGetUserLocation, userLocation } = this.props
+    const { mapCenter, mapZoom, mapMarkers, onGetUserLocation, userLocation, onSetActiveLocation, activeLocation } = this.props
     const { template } = this.state
     const getMapDims = template => {
       const large = { width: '96vw', height: '40vw' }
@@ -66,7 +84,11 @@ class LocationsWrapper extends Component {
     }
     return (
       <div>
-        <TemplateSwitcher template={template} onGetUserLocation={onGetUserLocation} userLocation={userLocation} >
+        <TemplateSwitcher template={template} 
+          onGetUserLocation={onGetUserLocation} 
+          onSetActiveLocation={onSetActiveLocation} 
+          userLocation={userLocation}
+          activeLocation={activeLocation} >
           <h1>LOCATIONS</h1>
           <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} setTemplate={this.setTemplate} />
           <GoogleMap center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(template)} setTemplate={this.setTemplate} />
@@ -78,21 +100,23 @@ class LocationsWrapper extends Component {
 }
 
 function mapStateToProps (state) {
-  const { location: { userLocation, mapCenter, mapZoom, mapMarkers } } = state
+  const { location: { userLocation, mapCenter, mapZoom, mapMarkers, activeLocation } } = state
   return {
     userLocation,
     mapCenter,
     mapZoom,
-    mapMarkers
+    mapMarkers,
+    activeLocation
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     onGetUserLocation: path => dispatch(getUserLocation(path)),
-    onsetMapCenter: center => dispatch(setMapCenter(center)),
-    onsetMapZoom: zoom => dispatch(setMapZoom(zoom)),
-    onsetMapMarkers: markers => dispatch(setMapMarkers(markers))
+    onSetMapCenter: center => dispatch(setMapCenter(center)),
+    onSetMapZoom: zoom => dispatch(setMapZoom(zoom)),
+    onSetMapMarkers: markers => dispatch(setMapMarkers(markers)),
+    onSetActiveLocation: location => dispatch(setActiveLocation(location))    
   }
 }
 

@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import Images from './Images'
+import ResultModule from './ResultModule'
+import Router from 'next/router'
 import { binder } from '../../lib/_utils'
 
 class TemplateDetail extends Component {
@@ -7,12 +9,13 @@ class TemplateDetail extends Component {
     super(props)
     binder(this, ['renderSpecials'])
   }
+
   renderSpecials (specials) {
     return (
       <div className='specials-img-array'>
         { specials.map((special, i) => {
           return (
-            <div className='special-img-wrapper'>
+            <div key={`special-${i}`} className='special-img-wrapper'>
               <img alt={'special' + i} src={special} />
             </div>
           )
@@ -35,9 +38,8 @@ class TemplateDetail extends Component {
     )
   }
   render () {
-    const { children } = this.props
+    const { children, activeLocation } = this.props
     const Title = children[0]
-    const SearchBar = children[1]
     const Map = children[2]
     return (
       <div className='template-wrapper'>
@@ -45,7 +47,7 @@ class TemplateDetail extends Component {
         <section className='main-content-wrapper'>
           <div className='top-content'>
             <div className='gridsec description-wrapper'>
-            
+              <ResultModule detail location={activeLocation} />
             </div>
             <div className='gridsec images-wrapper'>
               <Images images={[

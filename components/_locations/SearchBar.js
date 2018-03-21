@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import debounce from 'lodash.debounce'
-import { geocodeByAddress, geocodeByPlaceId, getLatLng } from '../../lib/_mapUtils'
+import { geocodeByAddress, getLatLng } from '../../lib/_mapUtils'
 import { binder } from '../../lib/_utils'
 
 export default class SearchBar extends Component {
@@ -33,16 +33,22 @@ export default class SearchBar extends Component {
   }
 
   componentDidMount () {
-    if (!window.google) {
-      throw new Error('no Google')
+    const init = () => {
+      if (typeof window !== 'undefined' || !window.google.maps.places) {
+        if (!window.google) {
+          // throw new Error('no Google')
+          console.log('no google')
+          setTimeout(init, 500)
+        } else {
+          this.autocompleteService = new window.google.maps.places.AutocompleteService()
+          this.autocompleteOK = window.google.maps.places.PlacesServiceStatus.OK
+          this.distanceService = new window.google.maps.DistanceMatrixService()
+        }
+      } else {
+        setTimeout(init, 500)
+      }
     }
-    if (!window.google.maps.places) {
-      throw new Error('no Google Places')
-    }
-    this.autocompleteService = new window.google.maps.places.AutocompleteService()
-    this.autocompleteOK = window.google.maps.places.PlacesServiceStatus.OK
-
-    this.distanceService = new window.google.maps.DistanceMatrixService()
+    init()
   }
 
   autocompleteCallback (predictions, status) {
