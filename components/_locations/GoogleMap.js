@@ -46,7 +46,6 @@ export default class GoogleMap extends Component {
         // this.setMarkers()
         // this.setState({ markers: this.props.markers })
         this.setCenterViaMarkers(locData)
-        console.log(this.state.center)
       }
     }
     init()
@@ -90,7 +89,7 @@ export default class GoogleMap extends Component {
     const mainAction = () => {
       if (marker) this.setState({ bounds: this.state.bounds.extend(marker) })
       this.map.fitBounds(this.state.bounds)
-      console.log(this.state.bounds)
+      // console.log(this.state.bounds)
     }
     if (!this.state.bounds) {
       this.setState({ bounds: new window.google.maps.LatLngBounds() }, mainAction)
@@ -104,7 +103,7 @@ export default class GoogleMap extends Component {
     let minLat = null
     let maxLng = null
     let minLng = null
-   
+
     const markerCenter = markers.reduce((obj, marker) => {
       if (maxLat === null || marker.coords.lat > maxLat) maxLat = marker.coords.lat
       if (minLat === null || marker.coords.lat < minLat) minLat = marker.coords.lat
@@ -117,7 +116,7 @@ export default class GoogleMap extends Component {
       this.setBounds(marker.coords)
       return obj
     }, { coords: { lat: 0, lng: 0 } })
-    console.log(markerCenter)
+    // console.log(markerCenter)
     this.setCenter(markerCenter.coords)
   }
 
@@ -127,7 +126,7 @@ export default class GoogleMap extends Component {
     } else {
       if (this.props.center) {
         if (typeof this.props.center === 'string') {
-          console.log(this.props.center)
+          // console.log(this.props.center)
           this.getCoordsFromAddress(this.props.center)
             .then(coords => {
               this.setState({ center: coords })

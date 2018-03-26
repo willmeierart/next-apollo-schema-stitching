@@ -1,10 +1,17 @@
+import { Link } from 'next-url-prettifier'
+import { Router } from '../../server/routes'
+const NextRouter = require('next/router')
+
 const ResultModule = ({ location, pickLocation, detail }) => {
   const address = location ? location.address : ''
   const addrSplitta = address.indexOf(',')
   const addr1 = address.substring(0, addrSplitta)
   const addr2 = address.substring(addrSplitta + 2, address.length)
   const onPickLocation = () => {
-    if (pickLocation) pickLocation(location)
+    // NextRouter.onRouteChangeStart = url => {
+    //   console.log(location)
+    if (pickLocation) setTimeout(() => { pickLocation(location) }, 100)
+    // }
   }
   return location !== null ? (
     <div className='result-outer'>
@@ -26,7 +33,14 @@ const ResultModule = ({ location, pickLocation, detail }) => {
               </div>
             )) }</div>
             { !detail &&
-              <div className='visit-btn' onClick={onPickLocation}>VISIT LOCATION PAGE</div>
+              <div className='visit-btn' onClick={onPickLocation}>
+                <Link prefetch route={Router.linkPage('locations', { state: 'detail', spec: location.name })}>
+                  VISIT LOCATION PAGE
+                </Link>
+                {/* <div>
+                  VISIT LOCATION PAGE
+                </div> */}
+              </div>
             }
           </div>
         </div>

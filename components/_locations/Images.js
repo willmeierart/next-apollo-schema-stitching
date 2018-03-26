@@ -19,7 +19,6 @@ class Images extends Component {
     return (
       <div className='thumbs-array'>
         { this.props.images.reduce((a, b) => {
-          console.log(b)
           if (b !== this.state.activeImg) {
             a.push(
               <div key={i} className='thumb-wrapper'>
@@ -28,7 +27,6 @@ class Images extends Component {
             )
           }
           i++
-          console.log(a)
           return a
         }, []) }
         <style jsx>{`

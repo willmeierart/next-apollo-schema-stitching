@@ -2,23 +2,23 @@
 import React, { Component } from 'react'
 // import 'normalize.css'
 import { connect } from 'react-redux'
-import Head from '../components/Head'
+import { setLocPageState } from '../lib/redux/actions'
+// import Head from '../components/Head'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 
 // import globalStyles from '../../styles/index.scss'
 
 class App extends Component {
-
   render () {
-    const { title, children } = this.props
+    const { title, children, pageState } = this.props
     return (
       <div className='App'>
         {/* <Head title={title} /> */}
         <div>
-          <Header />
+          <Header pageState={pageState} />
           <main>{ children }</main>
-          <Footer />
+          <Footer pageState={pageState} />
         </div>
         <style jsx global>{`
           body {
@@ -48,13 +48,17 @@ class App extends Component {
   }
 } 
 
-// const mapStateToProps = async state => {
-//   return null
-// }
+function mapStateToProps (state) {
+  return {
+    pageState: state.location.pageState
+  }
+}
 
-// const mapDispatchToProps = async dispatch => {
-//   return null
-// }
+function mapDispatchToProps (dispatch) {
+  return {
+    onSetLocPageState: pageState => dispatch(setLocPageState(pageState))
+  }
+}
 
-// export default connect(mapStateToProps, mapDispatchToProps)(App)
-export default App
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+// export default App

@@ -1,11 +1,18 @@
 ## active
-[] find out about which menu items have dropdowns
-[] research SEO of franchises
-  [] work out EXACTLY what routing schema 
+[] general
+  [x] find out about which menu items have dropdowns - ALL
+  [] FINISH UDEMY GRAPHQL
 
-[] restrict google maps key
+[] locations 
+  [] work out routing completely
+    [] make sure query strings parseable
+    [] make sure everything actually being SSR'd
+  [] maps
+    [] restrict api key
+    [] get working on serverside
+  [] figure out multi-endpoint apollo thing (schema-stitching?)
+  
 
-[] finish udemy graphql course
 
 ## meeting 03/15/18
 - all sites together
@@ -60,3 +67,22 @@
     - locations/results/:id
       - id === [state] >> return state results
       - id === [name]  >> return specific page
+
+
+I’ve got a ‘locations’ page which has 3 states:
+- ‘initial’ (just a search bar)
+- 'results' (co-interactive search bar & map with a list of results)
+- 'detail' (once you've picked a location)
+& I need to be able to navigate (synthetically), primarily for SEO purposes, to pages like:
+1. a specific search (i.e. '80210')
+2. predefined 'zones' (i.e. 'Colorado' or 'Denver')
+3. any specific location's detail page
+So, I'm thinking I need to have a routing structure like:
+- initial: ```/locations```
+- results:
+  - ```/locations/results?search=some+stringified+specific+search```
+- region:
+  - ```/locations/region/:some/:level/:of/:specificity```
+- detail:
+  - ```/locations/detail/franchiseBrand/some-specific-location's-identifier```
+& I'm wondering, does this cover the bases / have potential conflicts? I'm thinking that I've solved the problem of having multiple ways of treating the  ```/locations/results``` route by using the query string instead of a subroute... but just wanna make sure the strategy I'm gonna go for is actually a good idea

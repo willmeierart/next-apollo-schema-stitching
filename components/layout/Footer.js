@@ -4,18 +4,16 @@ import { AzLogo01 } from '../assets/ZeroLogos'
 
 const Footer = () => {
   const socials = [ { type: 'facebook', link: '' }, { type: 'twitter', link: '' } ]
-  const renderSocialIcons = socials => socials.map(b => {
-    return (
-      <a key={b.type} href={b.link}>
-        <i className={`fab fa-${b.type}`} />
-        <style jsx>{`
-          a {
-            margin: 1em;
-          }
-        `}</style>
-      </a>
-    )
-  })
+  const renderSocialIcons = socials => socials.map(b => (
+    <a key={b.type} href={b.link}>
+      <i className={`fab fa-${b.type}`} />
+      <style jsx>{`
+        a {
+          margin: 1em;
+        }
+      `}</style>
+    </a>
+  ))
 
   const appendChildList = route => {
     return (
@@ -40,7 +38,7 @@ const Footer = () => {
   const renderNav = routes => (
     <ul className='top-lvl-routes'>
       { routes.map(route => (
-        <li key={route.prettyUrl}>
+        <li key={route.title}>
           <Link prefetch route={Router.linkPage(route.page, { title: route.title })}>
             <span>{ route.title }</span>
           </Link>
@@ -80,8 +78,7 @@ const Footer = () => {
           display: flex;
           flex-direction: column;
           flex-grow: 1;
-          {/* position: absolute;
-          bottom: 0; */}
+          position: relative;
         }
         .footer-content-wrapper {
           position: relative;

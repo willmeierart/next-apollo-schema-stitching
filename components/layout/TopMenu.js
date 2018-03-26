@@ -1,7 +1,7 @@
 import { Link } from 'next-url-prettifier'
 import { Router, routes } from '../../server/routes'
 
-const TopMenu = () => {
+const TopMenu = ({ pageState }) => {
   const renderList = () => (
     <ul>
       {
@@ -9,27 +9,45 @@ const TopMenu = () => {
           switch (route.title) {
             case ('Car Washes') :
               return (
-                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+                <li key={route.title}>
+                  <Link prefetch route={Router.linkPage(route.page, { title: route.title })}>
+                    <span className='standard'>{ route.title }</span>
+                  </Link>
+                </li>
               )
             case ('Fast Pass - Unlimited') :
               return (
-                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+                <li key={route.title}>
+                  <Link prefetch route={Router.linkPage(route.page, { title: route.title })}>
+                    <span className='standard'>{ route.title }</span>
+                  </Link>
+                </li>
               )
             case ('About') :
               return (
-                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='standard'>{ route.title }</span></Link></li>
+                <li key={route.title}>
+                  <Link prefetch route={Router.linkPage(route.page, { title: route.title })}>
+                    <span className='standard'>{ route.title }</span>
+                  </Link>
+                </li>
               )
             case 'Locations' :
               return (
-                <li key={route.prettyUrl}><Link prefetch route={Router.linkPage(route.page, { title: route.title })}><span className='locations'>FIND A LOCATION</span></Link></li>
+                <li key={route.title}>
+                  <Link prefetch route={Router.linkPage(route.page, { state: pageState })}>
+                    <span className='locations'>FIND A LOCATION</span>
+                  </Link>
+                </li>
               )
             case 'My Account' :
               return (
-                <li key={route.prettyUrl}><a href=''><span className='account'>{ route.title }</span></a></li>
+                <li key={route.title}>
+                  <a href=''><span className='account'>{ route.title }</span></a>
+                </li>
               )
             default :
               return (
-                <li key={route.prettyUrl} />
+                <li key={route.title} />
               )
           }
         })
@@ -37,7 +55,6 @@ const TopMenu = () => {
       <style jsx>{`
         ul {
           display: flex;
-          {/* justify-content: space-between; */}
           font-size: .75em;
           margin-left: 3em;
         }

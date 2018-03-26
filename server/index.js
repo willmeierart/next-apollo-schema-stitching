@@ -46,11 +46,18 @@ app.prepare()
     // })
 
     Router.forEachPattern((page, pattern, defaultParams) =>
-      server.get(pattern, (req, res) =>(
-        app.render(req, res, `/${page}`,
-          Object.assign({}, defaultParams, req.query, req.params)
+      server.get(pattern, (req, res) => {
+        console.log('\x1b[36m%s\x1b[0m', JSON.stringify(req.params))
+        console.log('\x1b[35m%s\x1b[0m', JSON.stringify(req.query)) // query string
+        console.log('\x1b[32m%s\x1b[0m', JSON.stringify(pattern))
+
+        const objAssign = Object.assign({}, defaultParams, req.query, req.params)
+        console.log(objAssign)
+
+        return app.render(req, res, `/${page}`, objAssign
+          
         )
-      ))
+      })
     )
 
     server.get('*', (req, res) => handle(req, res))

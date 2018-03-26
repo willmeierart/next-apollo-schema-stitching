@@ -1,37 +1,29 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
 import { connect } from 'react-redux'
-import { getUserLocation, setMapZoom, setMapMarkers, setMapCenter, setActiveLocation } from '../../lib/redux/actions'
+import { getUserLocation, setMapZoom, setMapMarkers, setMapCenter, setActiveLocation, setLocPageState, setActiveResultsList } from '../../lib/redux/actions'
 import TemplateSwitcher from './TemplateSwitcher'
 import GoogleMap from './GoogleMap'
 import SearchBar from './SearchBar'
 import { binder } from '../../lib/_utils'
+import locData from '../../lib/_data/locData'
 
 class LocationsWrapper extends Component {
   constructor (props) {
     super(props)
-    this.state = { template: 'initial' } // [initial, results, detail]
-    binder(this, ['setTemplate', 'setCenter', 'setMarkers', 'setPageState'])
+    this.state = { template: 'initial', fakeData: 'true' } // [initial, results, region, detail]
+    binder(this, ['setTemplate', 'setCenter', 'setMarkers', 'setPageStateGeoLoc', 'setPageStateViaUrl', 'setActiveResults', 'setPageStateMegaFunc'])
   }
 
   componentDidMount () {
-    this.setPageState()
-    console.log(this.props.url);
+    this.setPageStateGeoLoc()
+    this.setActiveResults()
+    console.log(this.props.url)
+    // console.log(this.props)
   }
 
   componentWillUnmount () {
     Router.onRouteChangeComplete = url => { this.props.onSetActiveLocation(null) }
-  }
-
-  setPageState () {
-    if (this.props.userLocation !== null || this.props.userLocation !== 'denied') {
-      if (this.props.activeLocation) {
-        this.setState({ template: 'detail' })
-      } else {
-        this.setState({ template: 'results' })
-      }
-    }
-    console.log(this.state.template)
   }
 
   componentDidUpdate (prevProps) {
@@ -40,21 +32,75 @@ class LocationsWrapper extends Component {
       typeof this.props.userLocation === 'object') ||
       this.props.activeLocation !== prevProps.activeLocation
     ) {
-      this.setPageState()
+      this.setPageStateGeoLoc()
     }
   }
 
-  setTemplate (template) {
-    if (template === 'initial' || template === 'results' || template === 'detail') {
-      this.setState({ template })
+  setActiveResults (results) {
+    const { onSetActiveResultsList } = this.props
+    if (this.state.fakeData) {
+      onSetActiveResultsList(locData)
+    } else if (results) {
+      onSetActiveResultsList(results)
     } else {
-      if (this.state.template === 'initial') {
-        this.setState({ template: 'detail' })
-      } else {
-        this.setState({ template: 'results' })
-      }
-      console.warn('not a valid template state... \n ...attempting default switch')
+      onSetActiveResultsList([])
     }
+  }
+
+  setPageStateMegaFunc () {
+    // 1. based on url
+    // 2. based on geolocation
+  }
+
+  setPageStateViaUrl () {
+    const { url } = this.props
+    const { pathname, asPath, query } = url
+    const { state, spec } = query
+
+    this.setTemplate(state)
+
+    if (state === 'detail') {
+      // if (spec !== '') {
+      this.props.onSetActiveLocation(spec)
+      // } else {
+      //   this.setTemplate('results')
+      // }
+    }
+  }
+
+  setPageStateGeoLoc () {
+    const { userLocation, activeLocation, onSetLocPageState } = this.props
+    if (userLocation !== null || userLocation !== 'denied') {
+      if (activeLocation) {
+        onSetLocPageState('detail') // this.setState({ template: 'detail' })
+      } else {
+        onSetLocPageState('results') // this.setState({ template: 'results' })
+      }
+    }
+    // console.log(this.props.pageState)
+  }
+
+ 
+
+  setTemplate (template) {
+    const { onSetLocPageState, pageState, url: { pathname } } = this.props
+    if (template === 'initial' || template === 'results' || template === 'detail' || template === 'region') {
+      onSetLocPageState(template) // this.setState({ template })
+    } else {
+      if (pathname.indexOf('region') !== -1) {
+        onSetLocPageState('region') // this.setState({ template: 'region' })
+      } else if (pathname.indexOf('detail') !== -1) {
+        onSetLocPageState('detail')
+      } else {
+        if (pageState === 'initial') {
+          onSetLocPageState('detail') // this.setState({ template: 'detail' })
+        } else {
+          console.warn('not a valid template state... \n ...attempting default switch')
+          onSetLocPageState('results') // this.setState({ template: 'results' })
+        }
+      }
+    }
+    console.log(this.props.url)
   }
 
   setCenter (center) { 
@@ -62,14 +108,12 @@ class LocationsWrapper extends Component {
     this.props.onSetMapCenter(center)
   }
   setMarkers (markers) {
-    console.log(markers);
     this.setState({ markers })
     this.props.onSetMapMarkers(markers)
   }
 
   render () {
-    const { mapCenter, mapZoom, mapMarkers, onGetUserLocation, userLocation, onSetActiveLocation, activeLocation } = this.props
-    const { template } = this.state
+    const { mapCenter, mapZoom, mapMarkers, onGetUserLocation, userLocation, onSetActiveLocation, activeResults, activeLocation, pageState } = this.props
     const getMapDims = template => {
       const large = { width: '96vw', height: '40vw' }
       const small = { width: '40vw', height: '40vw' }
@@ -84,14 +128,16 @@ class LocationsWrapper extends Component {
     }
     return (
       <div>
-        <TemplateSwitcher template={template} 
-          onGetUserLocation={onGetUserLocation} 
-          onSetActiveLocation={onSetActiveLocation} 
+        <TemplateSwitcher template={pageState}
+          onGetUserLocation={onGetUserLocation}
+          onSetActiveLocation={onSetActiveLocation}
+          setActiveResults={this.setActiveResults}
+          activeResults={activeResults}
           userLocation={userLocation}
           activeLocation={activeLocation} >
           <h1>LOCATIONS</h1>
           <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} setTemplate={this.setTemplate} />
-          <GoogleMap center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(template)} setTemplate={this.setTemplate} />
+          <GoogleMap center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(pageState)} setTemplate={this.setTemplate} />
         </TemplateSwitcher>
         <style jsx>{``}</style>
       </div>
@@ -100,13 +146,15 @@ class LocationsWrapper extends Component {
 }
 
 function mapStateToProps (state) {
-  const { location: { userLocation, mapCenter, mapZoom, mapMarkers, activeLocation } } = state
+  const { location: { userLocation, mapCenter, mapZoom, mapMarkers, activeLocation, pageState, activeResults } } = state
   return {
     userLocation,
     mapCenter,
     mapZoom,
     mapMarkers,
-    activeLocation
+    activeLocation,
+    pageState,
+    activeResults
   }
 }
 
@@ -116,7 +164,9 @@ function mapDispatchToProps (dispatch) {
     onSetMapCenter: center => dispatch(setMapCenter(center)),
     onSetMapZoom: zoom => dispatch(setMapZoom(zoom)),
     onSetMapMarkers: markers => dispatch(setMapMarkers(markers)),
-    onSetActiveLocation: location => dispatch(setActiveLocation(location))    
+    onSetActiveLocation: location => dispatch(setActiveLocation(location)),
+    onSetLocPageState: pageState => dispatch(setLocPageState(pageState)),
+    onSetActiveResultsList: list => dispatch(setActiveResultsList(list))
   }
 }
 
