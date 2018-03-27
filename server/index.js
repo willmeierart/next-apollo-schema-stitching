@@ -10,40 +10,6 @@ const handle = app.getRequestHandler()
 app.prepare()
   .then(() => {
     const server = express()
-    // server.use('/static', express.static('static'))
-
-    // server.get('*', (req, res) => {
-    //   // return handle(req, res)
-    //   return app.render(req, res, '/', req.query)
-    // })
-
-    // server.get('/washes', (req, res) => {
-    //   return app.render(req, res, '/washes')
-    // })
-    // server.get('/washes/:slug', (req, res) => {
-    //   return app.render(req, res, '/washes', { slug: req.params.slug })
-    // })
-    // server.get('/fastpass', (req, res) => {
-    //   return app.render(req, res, '/fastpass')
-    // })
-    // server.get('/about', (req, res) => {
-    //   return app.render(req, res, '/about')
-    // })
-    // server.get('/about/:slug', (req, res) => {
-    //   return app.render(req, res, '/about', { slug: req.params.slug })
-    // })
-    // server.get('/locations', (req, res) => {
-    //   return app.render(req, res, '/locations')
-    // })
-    // server.get('/locations/search', (req, res) => {
-    //   return app.render(req, res, '/locations')
-    // })
-    // server.get('/locations/search/:slug', (req, res) => {
-    //   return app.render(req, res, '/about', { slug: req.params.slug })
-    // })
-    // server.get('/legal', (req, res) => {
-    //   return app.render(req, res, '/legal')
-    // })
 
     Router.forEachPattern((page, pattern, defaultParams) =>
       server.get(pattern, (req, res) => {
@@ -51,34 +17,14 @@ app.prepare()
         console.log('\x1b[35m%s\x1b[0m', JSON.stringify(req.query)) // query string
         console.log('\x1b[32m%s\x1b[0m', JSON.stringify(pattern))
 
-        const objAssign = Object.assign({}, defaultParams, req.query, req.params)
-        console.log(objAssign)
+        const objAssigned = Object.assign({}, defaultParams, req.query, req.params)
+        console.log(objAssigned)
 
-        return app.render(req, res, `/${page}`, objAssign
-          
-        )
+        return app.render(req, res, `/${page}`, objAssigned)
       })
     )
 
     server.get('*', (req, res) => handle(req, res))
-
-    // routes.forEach((route, i) => {
-    //   console.log(route.route);
-    //   server.get(route.route, (req, res) => {
-    //     return app.render(req, res, route.route)
-    //   })
-    //   if (route.children) {
-    //     if (route.children.length > 0) {
-    //       route.children.forEach((child, j) => {
-    //         server.get(`${route.route}/:slug`, (req, res) => {
-    //           return app.render(req, res, route.route, {
-    //             slug: req.params.slug
-    //           })
-    //         })
-    //       })
-    //     }
-    //   }
-    // })
 
     server.listen(port, (err) => {
       if (err) throw err

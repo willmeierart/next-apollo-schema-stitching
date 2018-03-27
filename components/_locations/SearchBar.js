@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import debounce from 'lodash.debounce'
+import NextRouter from 'next/router'
 import { geocodeByAddress, getLatLng } from '../../lib/_mapUtils'
 import { binder } from '../../lib/_utils'
 
@@ -128,6 +129,23 @@ export default class SearchBar extends Component {
             // console.log(markers)
             // this.props.setMarkers([])
             this.props.setMarkers(markers)
+
+            NextRouter.push({
+              pathname: '/locations',
+              query: {
+                state: 'results',
+                spec: place.formatted_address
+                  .toLowerCase()
+                  .replace(/(,)/g, '')
+                  .replace(/( )/g, '-')
+              },
+              asPath: `/carwash/locations/results?search=${
+                place.formatted_address
+              }`,
+              shallow: true
+            })
+          }).then(() => {
+            console.log(this.props.url)
           })
         )
       } else {
@@ -141,7 +159,7 @@ export default class SearchBar extends Component {
   getActiveItem () { return this.state.autocompleteItems.find(item => item.active) }
 
   selectActiveItemAtIndex (index) {
-    // this is what points at a certain item and gets selects that one specifically
+    // this is what points at a certain item and selects that one specifically
     console.log(this.state.autocompleteItems)
     const activeName = this.state.autocompleteItems.find(item => item.index === index).suggestion
     this.setActiveItemAtIndex(index) // below

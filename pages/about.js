@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import AppProvider from '../lib/redux/AppProvider'
 import AboutWrapper from '../components/_about/AboutWrapper'
+import withData from '../lib/withData'
 
-export default class About extends Component {
+class About extends Component {
   render () {
     return (
       <AppProvider title='About'>
@@ -12,3 +13,5 @@ export default class About extends Component {
     )
   }
 }
+
+export default withData(About)

@@ -1,4 +1,5 @@
 import AppProvider from '../lib/redux/AppProvider'
+import withData from '../lib/withData'
 
 const FastPass = () => (
   <AppProvider title='FastPass'>
@@ -7,4 +8,4 @@ const FastPass = () => (
   </AppProvider>
 )
 
-export default FastPass
+export default withData(FastPass)

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import TemplateSwitcher from './templates/TemplateSwitcher'
 import GoogleMap from './GoogleMap'
 import SearchBar from './SearchBar'
-import LocationsDataManager from './LocationsDataManager'
+import DataManager from './DataManager'
 import { binder } from '../../lib/_utils'
 
 import locData from '../../lib/_data/locData'
@@ -69,4 +69,4 @@ class LocationsWrapper extends Component {
   }
 }
 
-export default LocationsDataManager(LocationsWrapper)
+export default DataManager(LocationsWrapper)

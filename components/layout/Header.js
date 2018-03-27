@@ -2,11 +2,11 @@ import Link from 'next/link'
 import TopMenu from './TopMenu'
 import Logo from './Logo'
 
-const Header = () => (
+const Header = props => (
   <div className='header'>
     <Logo />
     {/* <div className='title'>CARWASH USA EXPRESS</div> */}
-    <TopMenu />
+    <TopMenu {...props} />
     <style jsx>{`
       .header {
         display: flex;

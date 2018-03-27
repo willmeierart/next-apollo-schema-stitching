@@ -13,7 +13,8 @@
     [] restrict api key
     [] get working on serverside
     [] deal with automatic bounds / markers / etc
-    [] get working with indirect search
+    [] get working with indirect search (markers)
+    [] check out potential for styling (esp america border)
   [] figure out multi-endpoint apollo thing (schema-stitching?)
   
 
@@ -78,3 +79,15 @@ So, I'm thinking I need to have a routing structure like:
 - detail:
   - ```/locations/detail/franchiseBrand/some-specific-location's-identifier```
 & I'm wondering, does this cover the bases / have potential conflicts? I'm thinking that I've solved the problem of having multiple ways of treating the  ```/locations/results``` route by using the query string instead of a subroute... but just wanna make sure the strategy I'm gonna go for is actually a good idea
+
+
+## logic for location state etc
+
+if (isServer) {
+  setPageState(url.query.state)
+  if (initial) {
+    doGeo()
+  } else if ()
+} else {
+  
+}

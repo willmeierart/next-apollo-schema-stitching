@@ -9,9 +9,10 @@ import AppProvider from '../lib/redux/AppProvider'
 // import AppProvider from '../lib/redux/AppProvider'
 // import { AzLogo01 } from '../components/assets/ZeroLogos'
 import HomeWrapper from '../components/_home-global/HomeWrapper'
+import withData from '../lib/withData'
 
 // include boilerplate for global loader dependent on graphql req's:
-export default class HomePage extends Component {
+class HomePage extends Component {
   render () {
     return (
       <AppProvider title='Home'>
@@ -38,10 +39,4 @@ export default class HomePage extends Component {
   }
 }
 
-// example of GraphQL with multiple queries composed:
-// export default withData(
-//   compose(
-//     graphql(allThings1, { name: 'allThings1' }),
-//     graphql(allThings2, { name: 'allThings2' })
-//   )(HomePage)
-// )
+export default withData(HomePage)

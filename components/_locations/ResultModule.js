@@ -35,7 +35,7 @@ const ResultModule = ({ location, pickLocation, detail }) => {
             { !detail &&
               <div className='visit-btn' onClick={onPickLocation}>
                 <Link prefetch route={Router.linkPage('locations', { state: 'detail', spec: location.name })}>
-                  VISIT LOCATION PAGE
+                  <a>VISIT LOCATION PAGE</a>
                 </Link>
                 {/* <div>
                   VISIT LOCATION PAGE

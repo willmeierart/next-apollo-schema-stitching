@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
-import Router from 'next/router'
+import NextRouter from 'next/router'
+import ExecutionEnvironment from 'exenv'
 import withData from '../../lib/withData'
 import { allLocations } from '../../lib/queries'
 import {
@@ -15,94 +16,100 @@ import {
 } from '../../lib/redux/actions'
 import { binder } from '../../lib/_utils'
 
-export default function LocationsDataManager (ComposedComponent) {
+export default function DataManager (ComposedComponent) {
   class WrappedComponent extends Component {
     constructor (props) {
       super(props)
-      binder(this, ['pageStateMegaFunc', 'setPageStateViaUrl', 'setPageStateGeoLoc', 'setTemplate'])
+      binder(this, ['setPageStateViaUrl', 'setPageStateGeoLoc', 'setTemplate'])
     }
     componentDidMount () {
-      console.log(this.props)
-      this.pageStateMegaFunc()
+      this.setPageStateViaUrl()
     }
 
     componentDidUpdate (prevProps) {
       if (
         (this.props.userLocation !== prevProps.userLocation &&
         typeof this.props.userLocation === 'object') ||
-        this.props.activeLocation !== prevProps.activeLocation
+        this.props.activeLocation !== prevProps.activeLocation ||
+        this.props.url !== prevProps.url
       ) {
-        this.pageStateMegaFunc() // only fire if on base route
+        this.setPageStateViaUrl()
       }
+      console.log(this.props);
     }
 
     componentWillUnmount () {
-      Router.onRouteChangeComplete = url => { this.props.onSetActiveLocation(null) }
-    }
-
-    pageStateMegaFunc () {
-      // collate all logic into single func
-      this.setPageStateGeoLoc()
+      NextRouter.onRouteChangeComplete = url => { this.props.onSetActiveLocation(null) }
     }
 
     setPageStateViaUrl () {
       const { url } = this.props
-      const { pathname, asPath, query } = url
-      const { state, spec } = query
+      const { query: { state, spec } } = url
+      const isServer = !ExecutionEnvironment.canUseDOM
+      const initial = !state || state === '' || state === 'initial'
 
-      this.setTemplate(state)
+      console.log('client-rendered? ', isServer)
 
-      if (state === 'detail') {
-        // if (spec !== '') {
-        this.props.onSetActiveLocation(spec)
-        // } else {
-        //   this.setTemplate('results')
-        // }
+      switch (true) {
+        case (initial || (state === 'results' && isServer)):
+          this.setPageStateGeoLoc()
+          break
+        case state === 'detail':
+          this.props.onSetActiveLocation(spec)
+          this.setTemplate(state)
+          break
+        default:
+          this.setTemplate(state)
+          break
       }
     }
 
     setPageStateGeoLoc () {
-      const { userLocation, activeLocation, onSetLocPageState } = this.props
-      if (userLocation !== null || userLocation !== 'denied') {
-        if (activeLocation) {
-          onSetLocPageState('detail') // this.setState({ template: 'detail' })
-        } else {
-          onSetLocPageState('results') // this.setState({ template: 'results' })
-        }
+      const { userLocation, onSetLocPageState } = this.props
+      if (userLocation !== null && userLocation !== 'denied') {
+        // onSetLocPageState('results') // need to have :spec of 'my-location'
+        NextRouter.push({
+          pathname: '/locations',
+          query: {
+            state: 'results',
+            spec: 'my-location'
+          },
+          asPath: '/carwash/locations/results?search=my-location',
+          shallow: true
+        })
+      } else {
+        this.setTemplate('initial')
       }
     }
 
     setTemplate (template) {
       const { onSetLocPageState, pageState, url: { pathname } } = this.props
       if (template === 'initial' || template === 'results' || template === 'detail' || template === 'region') {
-        onSetLocPageState(template) // this.setState({ template })
+        onSetLocPageState(template)
       } else {
         if (pathname.indexOf('region') !== -1) {
-          onSetLocPageState('region') // this.setState({ template: 'region' })
+          onSetLocPageState('region')
         } else if (pathname.indexOf('detail') !== -1) {
           onSetLocPageState('detail')
         } else {
           if (pageState === 'initial') {
-            onSetLocPageState('detail') // this.setState({ template: 'detail' })
+            onSetLocPageState('detail')
           } else {
             console.warn('not a valid template state... \n ...attempting default switch')
-            onSetLocPageState('results') // this.setState({ template: 'results' })
+            onSetLocPageState('results')
           }
         }
       }
-      console.log(this.props.url)
     }
 
     render () {
       return <ComposedComponent {...this.props} setTemplate={this.setTemplate} />
     }
   }
-  return connect(mapStateToProps, mapDispatchToProps)(
-    withData(
-      compose(
-        graphql(allLocations, { name: 'allLocations' })
-      )(WrappedComponent)
-    )
+  return compose(
+    graphql(allLocations, { name: 'allLocations' })
+  )(
+    connect(mapStateToProps, mapDispatchToProps)(WrappedComponent)
   )
 }
 

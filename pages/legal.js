@@ -1,4 +1,5 @@
 import React from 'react'
+import withData from '../lib/withData'
 
 const Legal = () => {
   return (
@@ -8,4 +9,4 @@ const Legal = () => {
   )
 }
 
-export default Legal
+export default withData(Legal)

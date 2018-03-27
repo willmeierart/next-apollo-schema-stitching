@@ -11,12 +11,12 @@ import Footer from '../components/layout/Footer'
 
 class App extends Component {
   render () {
-    const { title, children, pageState } = this.props
+    const { title, children, pageState, onSetLocPageState } = this.props
     return (
       <div className='App'>
         {/* <Head title={title} /> */}
         <div>
-          <Header pageState={pageState} />
+          <Header pageState={pageState} onSetLocPageState={onSetLocPageState} />
           <main>{ children }</main>
           <Footer pageState={pageState} />
         </div>

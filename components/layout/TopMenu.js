@@ -1,7 +1,7 @@
 import { Link } from 'next-url-prettifier'
 import { Router, routes } from '../../server/routes'
 
-const TopMenu = ({ pageState }) => {
+const TopMenu = ({ pageState, onSetLocPageState }) => {
   const renderList = () => (
     <ul>
       {
@@ -33,7 +33,7 @@ const TopMenu = ({ pageState }) => {
               )
             case 'Locations' :
               return (
-                <li key={route.title}>
+                <li key={route.title} onClick={() => { onSetLocPageState('initial') }}>
                   <Link prefetch route={Router.linkPage(route.page, { state: pageState })}>
                     <span className='locations'>FIND A LOCATION</span>
                   </Link>

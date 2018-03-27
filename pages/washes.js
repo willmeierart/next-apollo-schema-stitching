@@ -1,5 +1,6 @@
 import AppProvider from '../lib/redux/AppProvider'
 import TopSubMenu from '../components/layout/TopSubMenu'
+import withData from '../lib/withData'
 
 const Washes = ({ url }) => (
   <AppProvider title='Washes'>
@@ -8,4 +9,4 @@ const Washes = ({ url }) => (
   </AppProvider>
 )
 
-export default Washes
+export default withData(Washes)
