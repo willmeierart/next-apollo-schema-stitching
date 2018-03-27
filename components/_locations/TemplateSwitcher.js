@@ -3,7 +3,16 @@ import TemplateResults from './TemplateResults'
 import TemplateRegion from './TemplateRegion'
 import TemplateDetail from './TemplateDetail'
 
-const TemplateSwitcher = ({ template, children, onGetUserLocation, userLocation, onSetActiveLocation, activeLocation, activeResults, setActiveResults }) => {
+const TemplateSwitcher = ({
+  template,
+  children,
+  onGetUserLocation,
+  userLocation,
+  onSetActiveLocation,
+  activeLocation,
+  activeResults,
+  setActiveResults
+}) => {
   const componentSwitcher = () => {
     switch (template) {
       case 'initial':
@@ -45,11 +54,7 @@ const TemplateSwitcher = ({ template, children, onGetUserLocation, userLocation,
         )
     }
   }
-  return (
-    <div>
-      { componentSwitcher() }
-    </div>
-  )
+  return componentSwitcher()
 }
 
 export default TemplateSwitcher

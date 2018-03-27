@@ -2,6 +2,8 @@
 [] general
   [x] find out about which menu items have dropdowns - ALL
   [] FINISH UDEMY GRAPHQL
+  [] implement proptypes
+  [] clean up && comment code
 
 [] locations 
   [] work out routing completely
@@ -10,20 +12,10 @@
   [] maps
     [] restrict api key
     [] get working on serverside
+    [] deal with automatic bounds / markers / etc
+    [] get working with indirect search
   [] figure out multi-endpoint apollo thing (schema-stitching?)
   
-
-
-## meeting 03/15/18
-- all sites together
-  
-  - you get all location data from every graphcms endpoint, route to new site if they choose a location that's not in the brand they're on right now
-  - show a logo with a link to the other brand for every brand in the footer
-  - could even show a map with brand territory
-  - multiple stylistic states based on
-    - domain originally routed to
-    - map location selected
-  - in graphcms need domain site belongs to as a content type
 
 ## nuances of locations section
 - initial view

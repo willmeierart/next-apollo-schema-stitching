@@ -115,6 +115,7 @@ export default class SearchBar extends Component {
         res.forEach(place =>
           getLatLng(place).then(latLng => {
             // console.log(latLng)
+            console.log('USE BOUNDS OF PLACE FOR MILEAGE COMPARISION && PLACE.TYPES === "LOCALITY / POLITICAL ?" FOR DETECTING STATE?', place)
             const marker = {
               position: latLng,
               title: place.formatted_address,
@@ -124,7 +125,7 @@ export default class SearchBar extends Component {
             markers.push(marker)
             this.props.setCenter(latLng)
           }).then(() => {
-            console.log(markers)
+            // console.log(markers)
             // this.props.setMarkers([])
             this.props.setMarkers(markers)
           })
