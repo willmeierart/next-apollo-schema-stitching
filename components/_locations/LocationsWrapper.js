@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import TemplateSwitcher from './TemplateSwitcher'
+import TemplateSwitcher from './templates/TemplateSwitcher'
 import GoogleMap from './GoogleMap'
 import SearchBar from './SearchBar'
 import LocationsDataManager from './LocationsDataManager'
@@ -70,4 +70,3 @@ class LocationsWrapper extends Component {
 }
 
 export default LocationsDataManager(LocationsWrapper)
-

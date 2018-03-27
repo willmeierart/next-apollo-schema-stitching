@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import Images from './Images'
-import ResultModule from './ResultModule'
-import Router from 'next/router'
-import { binder } from '../../lib/_utils'
+// import Router from 'next/router'
+import Images from '../Images'
+import ResultModule from '../ResultModule'
+import { binder } from '../../../lib/_utils'
 
-class TemplateDetail extends Component {
+class Detail extends Component {
   constructor (props) {
     super(props)
     binder(this, ['renderSpecials'])
@@ -30,7 +30,7 @@ class TemplateDetail extends Component {
             width: ${100 / (specials.length + 1)}%;
           }
           img {
-            width: 100%
+            width: 100%;
             border: 1px solid black;
           }
         `}</style>
@@ -139,4 +139,4 @@ class TemplateDetail extends Component {
   }
 }
 
-export default TemplateDetail
+export default Detail

@@ -1,6 +1,6 @@
 import { Link } from 'next-url-prettifier'
 import { Router } from '../../server/routes'
-const NextRouter = require('next/router')
+// const NextRouter = require('next/router')
 
 const ResultModule = ({ location, pickLocation, detail }) => {
   const address = location ? location.address : ''

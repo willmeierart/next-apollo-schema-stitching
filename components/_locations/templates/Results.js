@@ -1,26 +1,36 @@
 import React, { Component } from 'react'
-import ResultModule from './ResultModule'
-import { binder } from '../../lib/_utils'
-import locData from '../../lib/_data/locData'
+import ResultModule from '../ResultModule'
+import { binder } from '../../../lib/_utils'
 
-// copied directly from TemplateResults for now
-
-export default class TemplateRegion extends Component {
+export default class Results extends Component {
   constructor (props) {
     super(props)
     binder(this, ['renderResults', 'pickLocation'])
   }
 
-  pickLocation (location) { this.props.onSetActiveLocation(location) }
+  componentDidMount () { this.props.setActiveResults() }
+  // componentWillUnmount () { this.props.setActiveResults() }
+
+  pickLocation (location) {
+    if (typeof location === 'string') {
+      this.props.onSetActiveLocation(location)
+    } else if (typeof location === 'object' && location.name) {
+      this.props.onSetActiveLocation(location.name)
+    }
+  }
 
   renderResults () {
-    const results = locData
-    return results.map((location, i) => (
-      <div key={`result-${i}`}>
-        <ResultModule pickLocation={this.pickLocation} location={location} />
-        { i !== results.length - 1 && <hr /> }
-      </div>
-    ))
+    const { activeResults } = this.props
+    if (activeResults.length > 0) {
+      return activeResults.map((location, i) => (
+        <div key={`result-${i}`}>
+          <ResultModule pickLocation={this.pickLocation} location={location} />
+          { i !== activeResults.length - 1 && <hr /> }
+        </div>
+      ))
+    } else {
+      return null
+    }
   }
 
   render () {

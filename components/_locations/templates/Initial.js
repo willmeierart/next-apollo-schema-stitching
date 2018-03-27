@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-export default class TemplateInitial extends Component {
+export default class Initial extends Component {
   componentDidMount () {
     const { userLocation, onGetUserLocation } = this.props
     if (userLocation !== 'denied') {

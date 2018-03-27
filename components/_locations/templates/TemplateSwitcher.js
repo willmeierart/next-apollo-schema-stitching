@@ -1,7 +1,7 @@
-import TemplateInitial from './TemplateInitial'
-import TemplateResults from './TemplateResults'
-import TemplateRegion from './TemplateRegion'
-import TemplateDetail from './TemplateDetail'
+import Initial from './Initial'
+import Results from './Results'
+import Region from './Region'
+import Detail from './Detail'
 
 const TemplateSwitcher = ({
   template,
@@ -17,40 +17,38 @@ const TemplateSwitcher = ({
     switch (template) {
       case 'initial':
         return (
-          <TemplateInitial
+          <Initial
             onGetUserLocation={onGetUserLocation}
-            userLocation={userLocation} >
+            userLocation={userLocation}>
             { children }
-          </TemplateInitial>
+          </Initial>
         )
       case 'results':
         return (
-          <TemplateResults
+          <Results
             activeResults={activeResults}
-            setActiveResults={setActiveResults} 
+            setActiveResults={setActiveResults}
             onSetActiveLocation={onSetActiveLocation}>
             { children }
-          </TemplateResults>
+          </Results>
         )
       case 'region':
-        return (
-          <TemplateRegion>{ children }</TemplateRegion>
-        )
+        return <Region>{ children }</Region>
       case 'detail':
         return (
-          <TemplateDetail
+          <Detail
             onSetActiveLocation={onSetActiveLocation}
-            activeLocation={activeLocation} >
+            activeLocation={activeLocation}>
             { children }
-          </TemplateDetail>
+          </Detail>
         )
       default :
         return (
-          <TemplateInitial
+          <Initial
             onGetUserLocation={onGetUserLocation}
-            userLocation={userLocation} >
+            userLocation={userLocation}>
             { children }
-          </TemplateInitial>
+          </Initial>
         )
     }
   }
