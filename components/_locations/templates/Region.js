@@ -1,30 +1,25 @@
 import React, { Component } from 'react'
-import ResultModule from '../ResultModule'
+import ResultsList from '../ResultsList'
 import { binder } from '../../../lib/_utils'
-import locData from '../../../lib/_data/locData'
 
-// copied directly from TemplateResults for now
-
-export default class Region extends Component {
+export default class Results extends Component {
   constructor (props) {
     super(props)
-    binder(this, ['renderResults', 'pickLocation'])
+    binder(this, ['pickLocation'])
   }
 
-  pickLocation (location) { this.props.onSetActiveLocation(location) }
-
-  renderResults () {
-    const results = locData
-    return results.map((location, i) => (
-      <div key={`result-${i}`}>
-        <ResultModule pickLocation={this.pickLocation} location={location} />
-        { i !== results.length - 1 && <hr /> }
-      </div>
-    ))
+  pickLocation (location) {
+    if (typeof location === 'string') {
+      this.props.onSetActiveLocation(location)
+    } else if (typeof location === 'object' && location.name) {
+      this.props.onSetActiveLocation(location.name)
+    } else {
+      console.log('error picking location')
+    }
   }
 
   render () {
-    const { children } = this.props
+    const { children, activeResults } = this.props
     const Title = children[0]
     const SearchBar = children[1]
     const Map = children[2]
@@ -37,7 +32,9 @@ export default class Region extends Component {
               Locations Near [search]
               <hr />
             </h2>
-            <div className='results-container content'>{ this.renderResults() }</div>
+            <div className='results-container content'>
+              <ResultsList results={activeResults} pickLocation={this.pickLocation} />
+            </div>
           </div>
           <div className='col col-right'>
             <div className='search-wrapper content'>{ SearchBar }</div>

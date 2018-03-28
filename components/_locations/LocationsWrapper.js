@@ -6,6 +6,7 @@ import DataManager from './data_managers/Wrapper'
 import { binder } from '../../lib/_utils'
 
 import locData from '../../lib/_data/locData'
+import ImperativeRouter from '../../server/ImperativeRouter'
 
 class LocationsWrapper extends Component {
   constructor (props) {
@@ -26,6 +27,7 @@ class LocationsWrapper extends Component {
   setMarkers (markers) { this.props.onSetMapMarkers(markers) } // leave in case middleware logic needed
 
   setActiveResults (results) {
+    console.log(this.props)
     const { onSetActiveResultsList } = this.props
     if (this.fakeData) {
       onSetActiveResultsList(locData)
@@ -34,6 +36,11 @@ class LocationsWrapper extends Component {
     } else {
       onSetActiveResultsList([])
     }
+  }
+
+  goToRegion () {
+    const query = { state: 'region' }
+    ImperativeRouter.push('locations', query, false)
   }
 
   render () {
@@ -52,6 +59,7 @@ class LocationsWrapper extends Component {
     }
     return (
       <div>
+        <div className='region-btn' onClick={this.goToRegion}>regions page</div>
         <TemplateSwitcher template={pageState}
           onGetUserLocation={onGetUserLocation}
           onSetActiveLocation={onSetActiveLocation}
@@ -63,7 +71,18 @@ class LocationsWrapper extends Component {
           <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} setTemplate={this.props.setTemplate} activeResults={activeResults} />
           <GoogleMap template={pageState} center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(pageState)} setTemplate={this.props.setTemplate} />
         </TemplateSwitcher>
-        <style jsx>{``}</style>
+        <style jsx>{`
+          .region-btn {
+            border: 1px solid black;
+            border-radius: 5px;
+            width: 100px;
+            text-align: center;
+            cursor: pointer;
+            background: red;
+            color: white;
+            margin: 2em;
+          }
+        `}</style>
       </div>
     )
   }

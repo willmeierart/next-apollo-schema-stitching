@@ -6,7 +6,7 @@
   [] clean up && comment code
 
 [] locations 
-  [] work out routing completely
+  [x] work out routing completely
     [] make sure query strings parseable - DOESN'T NEED TO SSR
     [] make sure everything actually being SSR'd
   [] maps
@@ -16,6 +16,8 @@
     [] get working with indirect search (markers)
     [] check out potential for styling (esp america border)
   [] figure out multi-endpoint apollo thing (schema-stitching?)
+  [] figure out how to bind 'region' (or derive it from data) to each location
+  [] start working on binding functions to real data, graphcms
   
 
 ## nuances of locations section

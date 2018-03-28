@@ -1,17 +1,18 @@
-import { Link } from 'next-url-prettifier'
-import { Router } from '../../server/routes'
+// import { Link } from 'next-url-prettifier'
+// import { Router } from '../../server/routes'
 // const NextRouter = require('next/router')
+import ImperativeRouter from '../../server/ImperativeRouter'
 
 const ResultModule = ({ location, pickLocation, detail }) => {
   const address = location ? location.address : ''
   const addrSplitta = address.indexOf(',')
   const addr1 = address.substring(0, addrSplitta)
   const addr2 = address.substring(addrSplitta + 2, address.length)
-  const onPickLocation = () => {
-    // NextRouter.onRouteChangeStart = url => {
-    //   console.log(location)
-    if (pickLocation) setTimeout(() => { pickLocation(location) }, 100)
-    // }
+  const onPickLocation = location => {
+    const query = { state: 'detail', spec: location.name }
+    ImperativeRouter.push('locations', query, false)
+
+    if (pickLocation) setTimeout(() => { pickLocation(location) })
   }
   return location !== null ? (
     <div className='result-outer'>
@@ -34,12 +35,12 @@ const ResultModule = ({ location, pickLocation, detail }) => {
             )) }</div>
             { !detail &&
               <div className='visit-btn' onClick={onPickLocation}>
-                <Link prefetch route={Router.linkPage('locations', { state: 'detail', spec: location.name })}>
+                {/* <Link prefetch route={Router.linkPage('locations', { state: 'detail', spec: location.name })}>
                   <a>VISIT LOCATION PAGE</a>
-                </Link>
-                {/* <div>
+                </Link> */}
+                <div>
                   VISIT LOCATION PAGE
-                </div> */}
+                </div>
               </div>
             }
           </div>

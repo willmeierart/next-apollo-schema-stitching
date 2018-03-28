@@ -16,22 +16,10 @@ export default class Results extends Component {
       this.props.onSetActiveLocation(location)
     } else if (typeof location === 'object' && location.name) {
       this.props.onSetActiveLocation(location.name)
+    } else {
+      console.log('error picking location')
     }
   }
-
-  // renderResults () {
-  //   const { activeResults } = this.props
-  //   if (activeResults.length > 0) {
-  //     return activeResults.map((location, i) => (
-  //       <div key={`result-${i}`}>
-  //         <ResultModule pickLocation={this.pickLocation} location={location} />
-  //         { i !== activeResults.length - 1 && <hr /> }
-  //       </div>
-  //     ))
-  //   } else {
-  //     return null
-  //   }
-  // }
 
   render () {
     const { children, activeResults } = this.props

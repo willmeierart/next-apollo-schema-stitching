@@ -69,8 +69,15 @@ const routes = [
             return '/carwash/locations'
           }
         case 'region':
-          // needs logic
-          return '/carwash/locations'
+          if (spec && spec !== '') {
+            if (spec2 && spec2 !== '') {
+              return `/carwash/locations/region/${spec}/${spec2}`
+            } else {
+              return `/carwash/locations/region/${spec}`
+            }
+          } else {
+            return `/carwash/locations/region/state`
+          }
         case 'detail':
           if (spec && spec !== '') {
             return `/carwash/locations/detail/${spec.toLowerCase().replace(/( )/g, '-')}`
