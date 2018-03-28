@@ -7,11 +7,11 @@
 
 [] locations 
   [] work out routing completely
-    [] make sure query strings parseable
+    [] make sure query strings parseable - DOESN'T NEED TO SSR
     [] make sure everything actually being SSR'd
   [] maps
     [] restrict api key
-    [] get working on serverside
+    [] get working on serverside - DOES IT NEED TO?
     [] deal with automatic bounds / markers / etc
     [] get working with indirect search (markers)
     [] check out potential for styling (esp america border)
@@ -89,5 +89,5 @@ if (isServer) {
     doGeo()
   } else if ()
 } else {
-  
+
 }

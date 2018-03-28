@@ -11,13 +11,16 @@ export default class Initial extends Component {
     const { children } = this.props
     const Title = children[0]
     const SearchBar = children[1]
-    // const Map = children[2]
+    const Map = children[2]
 
     return (
       <div className='template-wrapper'>
         <div className='title-wrapper'>{ Title }</div>
         <div className='search-wrapper'>{ SearchBar }</div>
-        <div className='map-wrapper'><img alt='placeholder map' src='/static/images/placeholderMap.jpg' /></div>
+        <div className='map-wrapper'>
+          {/* <img alt='placeholder map' src='/static/images/placeholderMap.jpg' /> */}
+          { Map }
+        </div>
         <style jsx>{`
           .template-wrapper {
             display: flex;

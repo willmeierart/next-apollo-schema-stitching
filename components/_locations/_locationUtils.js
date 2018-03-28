@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export const geocodeByAddress = (address, callback) => {
   const geocoder = new window.google.maps.Geocoder()
   const OK = window.google.maps.GeocoderStatus.OK
@@ -83,3 +85,13 @@ export const getLatLngDistMiles = (lat1, lng1, lat2, lng2) => {
   return dist
 }
 
+export const getCoordsFromAddress = adr => {
+  const API_KEY = process.env.GOOGLE_MAPS_KEY
+  return axios
+    .get(`https://maps.googleapis.com/maps/api/geocode/json?address=${adr}&key=${API_KEY}`)
+    .then(res => {
+      console.log(res.data.results[0].geometry.location)
+      return res.data.results[0].geometry.location
+    })
+    .catch(err => console.error(err))
+}

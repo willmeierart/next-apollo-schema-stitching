@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import TemplateSwitcher from './templates/TemplateSwitcher'
 import GoogleMap from './GoogleMap'
 import SearchBar from './SearchBar'
-import DataManager from './DataManager'
+import DataManager from './data_managers/Wrapper'
 import { binder } from '../../lib/_utils'
 
 import locData from '../../lib/_data/locData'
@@ -60,8 +60,8 @@ class LocationsWrapper extends Component {
           userLocation={userLocation}
           activeLocation={activeLocation} >
           <h1>LOCATIONS</h1>
-          <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} setTemplate={this.props.setTemplate} />
-          <GoogleMap center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(pageState)} setTemplate={this.props.setTemplate} />
+          <SearchBar setCenter={this.setCenter} setMarkers={this.setMarkers} setTemplate={this.props.setTemplate} activeResults={activeResults} />
+          <GoogleMap template={pageState} center={mapCenter} zoom={mapZoom} markers={mapMarkers} dims={getMapDims(pageState)} setTemplate={this.props.setTemplate} />
         </TemplateSwitcher>
         <style jsx>{``}</style>
       </div>

@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import NextRouter from 'next/router'
 import ExecutionEnvironment from 'exenv'
-import withData from '../../lib/withData'
-import { allLocations } from '../../lib/queries'
+import { allLocations } from '../../../lib/queries'
 import {
   getUserLocation,
   setMapZoom,
@@ -13,8 +12,8 @@ import {
   setActiveLocation,
   setLocPageState,
   setActiveResultsList
-} from '../../lib/redux/actions'
-import { binder } from '../../lib/_utils'
+} from '../../../lib/redux/actions'
+import { binder } from '../../../lib/_utils'
 
 export default function DataManager (ComposedComponent) {
   class WrappedComponent extends Component {
@@ -65,9 +64,9 @@ export default function DataManager (ComposedComponent) {
     }
 
     setPageStateGeoLoc () {
-      const { userLocation, onSetLocPageState } = this.props
+      const { userLocation } = this.props
       if (userLocation !== null && userLocation !== 'denied') {
-        // onSetLocPageState('results') // need to have :spec of 'my-location'
+        // this.setTemplate('results') // need to have :spec of 'my-location'
         NextRouter.push({
           pathname: '/locations',
           query: {

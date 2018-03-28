@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import debounce from 'lodash.debounce'
 import NextRouter from 'next/router'
-import { geocodeByAddress, getLatLng } from '../../lib/_mapUtils'
+import { geocodeByAddress, getLatLng } from './_locationUtils'
 import { binder } from '../../lib/_utils'
+import SearchManager from './data_managers/Search'
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
   constructor (props) {
     super(props)
     this.state = { autocompleteItems: [], value: '', markers: [] }
@@ -33,128 +34,32 @@ export default class SearchBar extends Component {
     this.shouldFetchSuggestions = (thing) => { if (thing) return true }
   }
 
-  componentDidMount () {
-    const init = () => {
-      if (typeof window !== 'undefined' || !window.google.maps.places) {
-        if (!window.google) {
-          // throw new Error('no Google')
-          console.log('no google')
-          setTimeout(init, 500)
-        } else {
-          this.autocompleteService = new window.google.maps.places.AutocompleteService()
-          this.autocompleteOK = window.google.maps.places.PlacesServiceStatus.OK
-          this.distanceService = new window.google.maps.DistanceMatrixService()
-        }
-      } else {
-        setTimeout(init, 500)
-      }
-    }
-    init()
-  }
-
-  autocompleteCallback (predictions, status) {
-    // called by this.fetchPredictions, used as callback to native google autocomplete func
-    // predictions are each full object returned from autocompleteservice
-    if (status !== this.autocompleteOK) {
-      console.error(status)
-      this.clearSuggestions()
-      return
-    }
-    const formattedSuggestion = format => ({
-      main: format.main_text,
-      secondary: format.secondary_text
-    })
-    this.setState({
-      autocompleteItems: predictions.map((p, idx) => ({
-        suggestion: p.description,
-        placeId: p.place_id,
-        active: this.highlightFirstSuggestion && idx === 0,
-        index: idx,
-        formattedSuggestion: formattedSuggestion(p.structured_formatting)
-      }))
-    })
-  }
-
   fetchPredictions () {
     // magical google autocomplete connector function
     const { value } = this.state
     if (value.length) {
-      this.autocompleteService.getPlacePredictions(
-        {
-          ...this.props.options,
-          input: value
-        },
+      this.props.autocompleteService.getPlacePredictions(
+        { ...this.props.options, input: value },
         this.autocompleteCallback
       )
     }
   }
 
-  clearSuggestions () {
-    this.setState({ autocompleteItems: [] })
-  }
-
   selectAddress (address, placeId, e) {
     // called by each handler: enter / mousedown / touchend
-    if (e !== undefined) {
-      e.preventDefault()
-    }
+    if (e !== undefined) { e.preventDefault() }
+
     this.clearSuggestions()
-    this.handleSelect(address, placeId) // these are properties on the 'active selection' object
+    this.handleSelect(address, placeId, this.handleInput) // these are properties on the 'active selection' object
   }
 
-  handleSelect (address, placeId) {
-    // called right above ^
-    this.props.onSelect
-      ? this.props.onSelect(address, placeId) // this doesn't exist, as far as I know...
-      : this.handleInput(address)
-
-    // MINE: try this here....
-    geocodeByAddress(address).then(res => {
-      // console.log(res)
-      if (res.length > 0 && typeof res !== 'string') {
-        const markers = []
-        res.forEach(place =>
-          getLatLng(place).then(latLng => {
-            // console.log(latLng)
-            console.log('USE BOUNDS OF PLACE FOR MILEAGE COMPARISION && PLACE.TYPES === "LOCALITY / POLITICAL ?" FOR DETECTING STATE?', place)
-            const marker = {
-              position: latLng,
-              title: place.formatted_address,
-              animation: 'drop',
-              onClick: () => { console.log('clicked') }
-            }
-            markers.push(marker)
-            this.props.setCenter(latLng)
-          }).then(() => {
-            // console.log(markers)
-            // this.props.setMarkers([])
-            this.props.setMarkers(markers)
-
-            NextRouter.push({
-              pathname: '/locations',
-              query: {
-                state: 'results',
-                spec: place.formatted_address
-                  .toLowerCase()
-                  .replace(/(,)/g, '')
-                  .replace(/( )/g, '-')
-              },
-              asPath: `/carwash/locations/results?search=${
-                place.formatted_address
-              }`,
-              shallow: true
-            })
-          }).then(() => {
-            console.log(this.props.url)
-          })
-        )
-      } else {
-        this.props.setMarkers([])
-      }
-    }).catch(err => { console.log(err) })
+  handleSelect (address, placeId, handleInput) {
+    this.props.handleSelection(address, placeId, handleInput)
   }
 
   handleInput (val) { this.setState({ value: val }) } // val = address (active selection)
+
+  clearSuggestions () { this.setState({ autocompleteItems: [] }) }
 
   getActiveItem () { return this.state.autocompleteItems.find(item => item.active) }
 
@@ -179,9 +84,7 @@ export default class SearchBar extends Component {
   }
 
   handleEnterKey (val) {
-    console.log(val)
     const activeItem = this.getActiveItem()
-    console.log(activeItem)
     if (activeItem === undefined) {
       this.handleEnterKeyWithoutActiveItem()
     } else {
@@ -190,8 +93,8 @@ export default class SearchBar extends Component {
   }
 
   handleEnterKeyWithoutActiveItem () {
-    console.log('no active item')
-    this.props.setMarkers([])
+    console.warn('no active item')
+    // this.props.setMarkers([])
   }
 
   handleDownKey () {
@@ -256,16 +159,7 @@ export default class SearchBar extends Component {
     }
   }
 
-  handleInputOnBlur (event) {
-    this.clearSuggestions()
-    // if (this.props.inputProps.onBlur) { this.props.inputProps.onBlur(event) }
-  }
-
-  renderSuggestion ({ suggestion }) {
-    return <div>{ suggestion }</div>
-  }
-
-  renderFooter () {}
+  handleInputOnBlur (event) { this.clearSuggestions() }
 
   getInputProps () {
     const defaultInputProps = {
@@ -281,6 +175,33 @@ export default class SearchBar extends Component {
     }
   }
 
+  autocompleteCallback (predictions, status) {
+    // called by this.fetchPredictions, used as callback to native google autocomplete func
+    // predictions are each full object returned from autocompleteservice
+    if (status !== this.props.autocompleteOK) {
+      console.error(status)
+      this.clearSuggestions()
+      return
+    }
+    const formattedSuggestion = format => ({
+      main: format.main_text,
+      secondary: format.secondary_text
+    })
+    this.setState({
+      autocompleteItems: predictions.map((p, idx) => ({
+        suggestion: p.description,
+        placeId: p.place_id,
+        active: this.highlightFirstSuggestion && idx === 0,
+        index: idx,
+        formattedSuggestion: formattedSuggestion(p.structured_formatting)
+      }))
+    })
+  }
+
+  renderSuggestion ({ suggestion }) { return <div>{ suggestion }</div> }
+
+  renderFooter () {}
+
   render () {
     const { autocompleteItems } = this.state
     const inputProps = this.getInputProps()
@@ -289,23 +210,21 @@ export default class SearchBar extends Component {
       <div className='searchbar-wrapper'>
         <div className='searchbar-root'>
           <input className='searchbar-input' {...inputProps} placeholder='Please enter a location' />
-          { /*autocompleteItems.length > 0*/true && (
-            <div className='searchbar-autocompleteContainer'>
-              { autocompleteItems.map((p, idx) => (
-                <div key={p.placeId} className={p.active ? 'searchbar-autocompleteItemActive' : 'searchbar-autocompleteItem'}
-                  onMouseOver={() => this.setActiveItemAtIndex(p.index)}
-                  onMouseDown={e => this.selectAddress(p.suggestion, p.placeId, e)}
-                  onTouchStart={() => this.setActiveItemAtIndex(p.index)}
-                  onTouchEnd={e => this.selectAddress(p.suggestion, p.placeId, e)}>
-                  { this.renderSuggestion({
-                    suggestion: p.suggestion,
-                    formattedSuggestion: p.formattedSuggestion
-                  }) }
-                </div>
-              )) }
-              { this.renderFooter() }
-            </div>
-          ) }
+          <div className='searchbar-autocompleteContainer'>
+            { autocompleteItems.map((p, idx) => (
+              <div key={p.placeId} className={p.active ? 'searchbar-autocompleteItemActive' : 'searchbar-autocompleteItem'}
+                onMouseOver={() => this.setActiveItemAtIndex(p.index)}
+                onMouseDown={e => this.selectAddress(p.suggestion, p.placeId, e)}
+                onTouchStart={() => this.setActiveItemAtIndex(p.index)}
+                onTouchEnd={e => this.selectAddress(p.suggestion, p.placeId, e)}>
+                { this.renderSuggestion({
+                  suggestion: p.suggestion,
+                  formattedSuggestion: p.formattedSuggestion
+                }) }
+              </div>
+            )) }
+            { this.renderFooter() }
+          </div>
         </div>
         <style jsx>{`
 
@@ -348,9 +267,7 @@ export default class SearchBar extends Component {
           }
           .searchbar-autocompleteItem, 
           .searchbar-autocompleteItemActive {
-            {/* height: 20px; */}
             padding: 10px;
-            {/* color: #555555; */}
             color:black;
             cursor: pointer;
           };
@@ -363,3 +280,5 @@ export default class SearchBar extends Component {
     )
   }
 }
+
+export default SearchManager(SearchBar)

@@ -1,51 +1,63 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import axios from 'axios'
+import MapManager from './data_managers/Map'
 import { binder } from '../../lib/_utils'
+import { getCoordsFromAddress } from './_locationUtils'
 import locData from '../../lib/_data/locData'
+// const geoJSON = require('../../lib/_data/US_GEO.json')
 
-export default class GoogleMap extends Component {
+class GoogleMap extends Component {
   constructor (props) {
     super(props)
     this.allMarkers = []
     this.state = {
-      center: null,
+      center: {lat: 39.8283459, lng: -98.5794797},
       // markers: this.props.markers || [],
-      zoom: this.props.zoom || 8,
+      zoom: this.props.zoom || 4,
       bounds: null
     }
     binder(this, ['setCenter', 'setMarker', 'setMarkers', 'setCenterViaMarkers', 'setBounds'])
   }
 
-  // componentWillMount () { this.setCenter() }
-
   componentDidMount () {
+    console.log(this.props)
     const init = () => {
+      const { template, onIdle, InitialMapStyles, markers } = this.props
       if (!window.google) {
         console.log('no google')
         setTimeout(init, 500)
       } else {
+        const { google } = window
         const mapNode = ReactDOM.findDOMNode(this.mapDOM)
-        this.map = new window.google.maps.Map(mapNode), {
+        this.map = new google.maps.Map(mapNode, {
           zoom: this.state.zoom,
           center: this.state.center,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
           disableDefaultUI: true,
           zoomControl: false,
           mapTypeControl: false,
           scaleControl: false,
           streetViewControl: false,
           rotateControl: false,
-          fullscreenControl: false
-        }
-        if (this.props.onIdle) {
-          window.google.maps.event.addListener(this.map, 'idle', () =>
-            this.props.onIdle(this.map, this.props.markers)
-            // this.props.onIdle(this.map, this.allMarkers)
+          fullscreenControl: false,
+          styles: template === 'initial' ? InitialMapStyles : null
+        })
+        if (onIdle) {
+          google.maps.event.addListener(this.map, 'idle', () =>
+            onIdle(this.map, markers)
+            // onIdle(this.map, this.allMarkers)
           )
         }
+        
         // this.setMarkers()
-        // this.setState({ markers: this.props.markers })
-        this.setCenterViaMarkers(locData)
+        // this.setState({ markers: markers })
+        if (template === 'results') {
+          this.setCenterViaMarkers(locData)
+        } else if (template === 'initial') {
+          this.setCenter('geographic center of the united states')
+          this.map.data.loadGeoJson('../../static/US_GEO.json')
+          this.map.data.setStyle({ fillColor: 'green' })
+        }
       }
     }
     init()
@@ -121,19 +133,23 @@ export default class GoogleMap extends Component {
   }
 
   setCenter (center) {
+    const setCenterType = center => {
+      if (typeof center === 'string') {
+        // console.log(this.props.center)
+        getCoordsFromAddress(center)
+          .then(coords => {
+            this.setState({ center: coords })
+            console.log(this.state.center)
+          })
+      } else {
+        this.setState({ center: this.props.center })
+      }
+    }
     if (center) {
-      this.setState({ center })
+      setCenterType(center)
     } else {
       if (this.props.center) {
-        if (typeof this.props.center === 'string') {
-          // console.log(this.props.center)
-          this.getCoordsFromAddress(this.props.center)
-            .then(coords => {
-              this.setState({ center: coords })
-            })
-        } else {
-          this.setState({ center: this.props.center })
-        }
+        setCenterType(this.props.center)
       } else {
         this.setState({ center: {lat: 39.740287, lng: -104.971806} })
       }
@@ -144,7 +160,7 @@ export default class GoogleMap extends Component {
     // if (this.props.markers !== undefined) {
     this.props.markers.forEach((marker, i) => {
       if (typeof marker.position === 'string') {
-        this.getCoordsFromAddress(marker.position)
+        getCoordsFromAddress(marker.position)
           .then(coords => {
             marker.position = coords
             this.setMarker(marker)
@@ -169,17 +185,6 @@ export default class GoogleMap extends Component {
     // this.allMarkers.push(m) // needs to somehow clear here
   }
 
-  getCoordsFromAddress (adr) {
-    const API_KEY = process.env.GOOGLE_MAPS_KEY
-    return axios
-      .get(`https://maps.googleapis.com/maps/api/geocode/json?address=${adr}&key=${API_KEY}`)
-      .then(res => {
-        console.log(res.data.results[0].geometry.location)
-        return res.data.results[0].geometry.location
-      })
-      .catch(err => console.error(err))
-  }
-
   render () {
     const { width, height } = this.props.dims
     return (
@@ -197,3 +202,5 @@ export default class GoogleMap extends Component {
     )
   }
 }
+
+export default MapManager(GoogleMap)
