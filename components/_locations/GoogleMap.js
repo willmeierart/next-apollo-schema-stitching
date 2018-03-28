@@ -48,14 +48,14 @@ class GoogleMap extends Component {
             // onIdle(this.map, this.allMarkers)
           )
         }
-        
-        // this.setMarkers()
+
+        this.setMarkers()
         // this.setState({ markers: markers })
         if (template === 'results') {
           this.setCenterViaMarkers(locData)
         } else if (template === 'initial') {
           this.setCenter('geographic center of the united states')
-          this.map.data.loadGeoJson('../../static/US_GEO.json')
+          this.map.data.loadGeoJson('/static/geoData/US_GEO.json')
           this.map.data.setStyle({ fillColor: 'green' })
         }
       }
@@ -159,6 +159,7 @@ class GoogleMap extends Component {
   setMarkers () {
     // if (this.props.markers !== undefined) {
     this.props.markers.forEach((marker, i) => {
+      console.log(marker)
       if (typeof marker.position === 'string') {
         getCoordsFromAddress(marker.position)
           .then(coords => {

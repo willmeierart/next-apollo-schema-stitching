@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import NextRouter from 'next/router'
-import { Router } from '../../../server/routes'
+import ImperativeRouter from '../../../server/ImperativeRouter'
 import { geocodeByAddress, getLatLng } from '../_locationUtils'
 import { binder } from '../../../lib/_utils'
 
@@ -36,7 +35,7 @@ export default function SearchManager (ComposedComponent) {
     makeMarker (latLng, place) {
       return latLng && place ? {
         position: latLng,
-        title: place.formatted_address,
+        title: place.formatted_address || place.name,
         animation: 'drop',
         onClick: () => { console.log('clicked') }
       } : {}
@@ -53,23 +52,32 @@ export default function SearchManager (ComposedComponent) {
       }, false)
       console.log(isRegion(place.types))
 
-      const isInRadius = locationCoords => {
-        const coordSet = this.getRelevantCoords(place)
-        // const distanceCheckedCoords = coordSet.reduce((bool, coords) => {
-        this.distanceService.getDistanceMatrix({
-          origins: locationCoords,
-          destinations: coordSet,
-          // unitSystem: window.google.maps.UnitSystem.IMPERIAL,
-          travelMode: window.google.maps.TravelMode.DRIVING
-        }, this.distanceServiceCallback)
-        // }, false)
-      }
+      // const isInRadius = locationCoords => {
+      //   const coordSet = this.getRelevantCoords(place, locationCoords)
+      //   // const distanceCheckedCoords = coordSet.reduce((bool, coords) => {
+      //   this.distanceService.getDistanceMatrix({
+      //     origins: locationCoords,
+      //     destinations: coordSet,
+      //     // unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+      //     travelMode: window.google.maps.TravelMode.DRIVING
+      //   }, this.distanceServiceCallback)
+      //   // }, false)
+      // }
 
       const locationCoords = locations.map(location => location.coords)
       console.log(locationCoords)
 
-      const nearbyLocations = isInRadius(locationCoords)
+      const nearbyLocations = this.getRelevantCoords(place, locationCoords)
       console.log(nearbyLocations)
+    }
+
+    doDistanceService (coords1, coords2) {
+      this.distanceService.getDistanceMatrix({
+        origins: coords1,
+        destinations: coords2,
+        // unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+        travelMode: window.google.maps.TravelMode.DRIVING
+      }, this.distanceServiceCallback)
     }
 
     distanceServiceCallback (response, status) {
@@ -77,7 +85,7 @@ export default function SearchManager (ComposedComponent) {
       if (status === 'OK') {
         console.log(response)
         const origins = response.originAddresses
-        const destinations = response.destinationAddresses
+        // const destinations = response.destinationAddresses
         origins.forEach((origin, i) => {
           console.log(origin)
           const results = response.rows[i].elements
@@ -87,7 +95,11 @@ export default function SearchManager (ComposedComponent) {
             if (distanceVal <= this.radius) {
               const location = this.props.activeResults[j]
               const newResults = [...this.state.nearbyResults]
+              console.log(newResults, location)
               if (newResults.indexOf(location) === -1) {
+                const makeMarkers = true
+                this.geocode(origin, makeMarkers)
+
                 newResults.push(location)
               }         
               this.setState({ nearbyResults: newResults })
@@ -98,7 +110,7 @@ export default function SearchManager (ComposedComponent) {
       }
     }
 
-    getRelevantCoords (place) {
+    getRelevantCoords (place, locationCoords) {
       if (place.geometry.bounds) {
         const { b, f } = place.geometry.bounds
         return [
@@ -106,13 +118,16 @@ export default function SearchManager (ComposedComponent) {
           { lat: f.f, lng: b.f }
         ]
       } else {
-        let LAT_LNG
-        getLatLng(place).then(latLng => {
-          console.log(latLng)
-          LAT_LNG = latLng
-        })
-        console.log(LAT_LNG)
-        return [LAT_LNG]
+        const asyncLatLng = async () => {
+          let LAT_LNG = []
+          await getLatLng(place).then(latLng => {
+            console.log(latLng)
+            LAT_LNG = [latLng]
+          })
+          this.doDistanceService(LAT_LNG, locationCoords)
+          // return LAT_LNG
+        }
+        return asyncLatLng()
       }
     }
 
@@ -122,7 +137,10 @@ export default function SearchManager (ComposedComponent) {
         ? this.props.onSelect(address, placeId) // this doesn't exist, as far as I know...
         : handleInput(address)
 
-      // MINE: try this here....
+      this.geocode(address)
+    }
+
+    geocode (address, makeMarkers) {
       geocodeByAddress(address).then(res => {
         // console.log(res)
         if (res.length > 0 && typeof res !== 'string') {
@@ -137,36 +155,13 @@ export default function SearchManager (ComposedComponent) {
 
               this.props.setCenter(latLng)
             }).then(() => {
-              // console.log(markers)
-              // this.props.setMarkers([])
-              this.props.setMarkers(markers)
+              if (makeMarkers) {
+                this.props.setMarkers(markers)
+              }
 
               this.findResultsInRadius(place, this.props.activeResults)
 
-              NextRouter.push({
-                pathname: '/locations',
-                query: {
-                  state: 'results',
-                  spec: place.formatted_address
-                    .toLowerCase()
-                    .replace(/(,)/g, '')
-                    .replace(/( )/g, '-')
-                },
-              
-              //   asPath: `/carwash/locations/results?search=${
-              //     place.formatted_address
-              //   }`,
-              //   shallow: true
-              // }
-                asPath: Router.linkPage('/locations', {
-                  state: 'results',
-                  spec: place.formatted_address
-                    .toLowerCase()
-                    .replace(/(,)/g, '')
-                    .replace(/( )/g, '-')
-                }),
-                shallow: true
-              })
+              this.routeToResults(place)
             }).then(() => {
               console.log(this.props.url)
             })
@@ -176,6 +171,17 @@ export default function SearchManager (ComposedComponent) {
         }
       }).catch(err => { console.log(err) })
     }
+
+    routeToResults (place) {
+      const spec = place.formatted_address
+        .toLowerCase()
+        .replace(/(,)/g, '')
+        .replace(/( )/g, '-')
+      const query = { state: 'results', spec }
+
+      ImperativeRouter.push('locations', query, false)
+    }
+
     render () {
       return (
         <ComposedComponent {...this.props}

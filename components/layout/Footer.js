@@ -1,6 +1,7 @@
 import { Link } from 'next-url-prettifier'
 import { Router, routes } from '../../server/routes'
 import { AzLogo01 } from '../assets/ZeroLogos'
+import FooterLogos from './FooterLogos'
 
 const Footer = () => {
   const socials = [ { type: 'facebook', link: '' }, { type: 'twitter', link: '' } ]
@@ -63,6 +64,13 @@ const Footer = () => {
   )
   return (
     <div className='footer'>
+      <FooterLogos images={[
+        'http://via.placeholder.com/120x120?text=CWUE',
+        'http://via.placeholder.com/120x120?text=CWE',
+        'http://via.placeholder.com/120x120?text=Goo+Goo',
+        'http://via.placeholder.com/120x120?text=Supersonic',
+        'http://via.placeholder.com/120x120?text=Splish+Splash'
+      ]} />
       <div className='footer-content-wrapper'>
         <div className='socials-wrapper'>{ renderSocialIcons(socials) }</div>
         <div className='footer-nav-wrapper'>{ renderNav(routes) }</div>
@@ -90,7 +98,7 @@ const Footer = () => {
           display: flex;
           justify-content: space-between;
           margin-left: 10vw;
-          margin-top: 100px;
+          margin-top: 30px;
         }
         .socials-wrapper {
           display: flex;

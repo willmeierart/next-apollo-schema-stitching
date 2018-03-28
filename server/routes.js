@@ -1,5 +1,6 @@
 const UrlPrettifier = require('next-url-prettifier').default
 const qs = require('qs')
+const NextRouter = require('next/router')
 
 const routes = [
   {
@@ -100,9 +101,22 @@ const routes = [
 ]
 
 // const urlPrettifier = new UrlPrettifier(routes)
-const urlPrettifier = new UrlPrettifier(routes, {
+const Router = new UrlPrettifier(routes, {
   paramsToQueryString: (params) => params.query ? `?${qs.stringify(params.query)}` : ''
 })
 
+const ImperativeRouter = {
+  push: (path, query, shallow) =>
+    NextRouter.push(
+      {
+        pathname: `/${path}`,
+        query: query
+      },
+      Router.linkPage(path, query).as,
+      { shallow }
+    )
+}
+
 exports.routes = routes
-exports.Router = urlPrettifier
+exports.Router = Router
+exports.ImperativeRouter = ImperativeRouter

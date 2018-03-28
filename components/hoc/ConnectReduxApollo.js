@@ -1,20 +1,19 @@
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import withData from '../../lib/withData'
-// import CustomLoader from '../components/layout/Loader'
 
-const ConnectReduxApollo = (mapStateToProps, mapDispatchToProps, queries, ComposedComponent) => {
-  const composedQueries = Object.keys(queries).map(query => {
-    const q = graphql(query, { name: `${query}` })
-    console.log(q)
-    return q
-  })
-  console.log(composedQueries)
+const ConnectReduxApollo = (
+  mapStateToProps,
+  mapDispatchToProps,
+  queries,
+  ComposedComponent
+) => {
+  const composedQueries = Object.keys(queries).map(query =>
+    graphql(query, { name: `${query}` })
+  )
 
   return connect(mapStateToProps, mapDispatchToProps)(
-    withData(
-      compose(composedQueries)(ComposedComponent)
-    )
+    withData(compose(composedQueries)(ComposedComponent))
   )
 }
 

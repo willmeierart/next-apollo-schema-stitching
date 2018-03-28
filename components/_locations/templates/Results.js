@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import ResultModule from '../ResultModule'
+import ResultsList from '../ResultsList'
 import { binder } from '../../../lib/_utils'
 
 export default class Results extends Component {
   constructor (props) {
     super(props)
-    binder(this, ['renderResults', 'pickLocation'])
+    binder(this, ['pickLocation'])
   }
 
   componentDidMount () { this.props.setActiveResults() }
@@ -19,22 +19,22 @@ export default class Results extends Component {
     }
   }
 
-  renderResults () {
-    const { activeResults } = this.props
-    if (activeResults.length > 0) {
-      return activeResults.map((location, i) => (
-        <div key={`result-${i}`}>
-          <ResultModule pickLocation={this.pickLocation} location={location} />
-          { i !== activeResults.length - 1 && <hr /> }
-        </div>
-      ))
-    } else {
-      return null
-    }
-  }
+  // renderResults () {
+  //   const { activeResults } = this.props
+  //   if (activeResults.length > 0) {
+  //     return activeResults.map((location, i) => (
+  //       <div key={`result-${i}`}>
+  //         <ResultModule pickLocation={this.pickLocation} location={location} />
+  //         { i !== activeResults.length - 1 && <hr /> }
+  //       </div>
+  //     ))
+  //   } else {
+  //     return null
+  //   }
+  // }
 
   render () {
-    const { children } = this.props
+    const { children, activeResults } = this.props
     const Title = children[0]
     const SearchBar = children[1]
     const Map = children[2]
@@ -47,7 +47,9 @@ export default class Results extends Component {
               Locations Near [search]
               <hr />
             </h2>
-            <div className='results-container content'>{ this.renderResults() }</div>
+            <div className='results-container content'>
+              <ResultsList results={activeResults} pickLocation={this.pickLocation} />
+            </div>
           </div>
           <div className='col col-right'>
             <div className='search-wrapper content'>{ SearchBar }</div>
