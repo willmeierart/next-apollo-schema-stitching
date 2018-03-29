@@ -1,9 +1,8 @@
 // main wrapper component - layout, universal styles, etc.
 import React, { Component } from 'react'
-// import 'normalize.css'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { setLocPageState } from '../lib/redux/actions'
-// import Head from '../components/Head'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 
@@ -61,4 +60,9 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
-// export default App
+
+App.propTypes = {
+  pageState: PropTypes.string.isRequired,
+  onSetLocPageState: PropTypes.func.isRequired,
+  title: PropTypes.string
+}

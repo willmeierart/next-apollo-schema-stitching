@@ -9,9 +9,9 @@ const handle = app.getRequestHandler()
 
 app.prepare()
   .then(() => {
-    const server = express()
+    const server = express() // just an express server
 
-    Router.forEachPattern((page, pattern, defaultParams) =>
+    Router.forEachPattern((page, pattern, defaultParams) => // this function comes from next-url-prettifier
       server.get(pattern, (req, res) => {
         console.log('\x1b[36m%s\x1b[0m', JSON.stringify(req.params))
         console.log('\x1b[35m%s\x1b[0m', JSON.stringify(req.query)) // query string

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import NextRouter from 'next/router'
@@ -135,4 +136,15 @@ function mapDispatchToProps (dispatch) {
     onSetLocPageState: pageState => dispatch(setLocPageState(pageState)),
     onSetActiveResultsList: list => dispatch(setActiveResultsList(list))
   }
+}
+
+DataManager.propTypes = {
+  userLocation: PropTypes.object,
+  mapCenter: PropTypes.object,
+  mapZoom: PropTypes.number,
+  mapMarkers: PropTypes.array,
+  activeLocation: PropTypes.object,
+  pageState: PropTypes.string.isRequired,
+  activeResults: PropTypes.array,
+  onSetLocPageState: PropTypes.func
 }

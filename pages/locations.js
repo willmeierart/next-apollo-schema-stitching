@@ -9,7 +9,5 @@ const Locations = ({ url }) => {
     </AppProvider>
   )
 }
-// export default withData(
-//   graphql(allLocationDetails)(Locations)
-// )
+
 export default withData(Locations)

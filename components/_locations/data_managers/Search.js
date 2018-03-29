@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import ImperativeRouter from '../../../server/ImperativeRouter'
 import { geocodeByAddress, getLatLng } from '../_locationUtils'
 import { binder } from '../../../lib/_utils'
@@ -194,4 +195,8 @@ export default function SearchManager (ComposedComponent) {
     }
   }
   return WrappedComponent
+}
+
+SearchManager.propTypes = {
+  handleSelection: PropTypes.func
 }

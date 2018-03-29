@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { Link } from 'next-url-prettifier'
 import { Router, routes } from '../../server/routes'
 
@@ -97,3 +98,8 @@ const TopMenu = ({ pageState, onSetLocPageState }) => {
 }
 
 export default TopMenu
+
+TopMenu.propTypes = {
+  pageState: PropTypes.string.isRequired,
+  onSetLocPageState: PropTypes.func.isRequired
+}

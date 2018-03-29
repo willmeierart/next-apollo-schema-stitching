@@ -12,17 +12,22 @@ export default function MapManager (ComposedComponent) {
     render () {
       const InitialMapStyles = [
         {
-          'featureType': 'water',
-          'elementType': 'geometry',
           'stylers': [
-            { 'visibility': 'off' }
+            { 'color': '#ffffff' }
           ]
-        }, {
-          'featureType': 'landscape',
-          'stylers': [
-            { 'visibility': 'off' }
-          ]
-        }, {
+        },
+        {
+        //   'featureType': 'water',
+        //   'elementType': 'geometry',
+        //   'stylers': [
+        //     { 'visibility': 'off' }
+        //   ]
+        // }, {
+        //   'featureType': 'landscape',
+        //   'stylers': [
+        //     { 'visibility': 'off' }
+        //   ]
+        // }, {
           'featureType': 'road',
           'stylers': [
             { 'visibility': 'off' }

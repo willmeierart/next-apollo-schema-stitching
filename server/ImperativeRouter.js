@@ -1,8 +1,10 @@
 import NextRouter from 'next/router'
 import { Router } from './routes'
 
+// because next-url-prettifier doesn't have imperative routing, this is the solution:
+
 const ImperativeRouter = {
-  push: (path, query, shallow) =>
+  push: (path, query, shallow/* (bool) */) =>
     NextRouter.push(
       {
         pathname: `/${path}`,

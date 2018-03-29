@@ -1,21 +1,17 @@
 const express = require('express')
 const next = require('next')
-// const routes = require('./routes')
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const port = process.env.PORT || 3000
 const handle = app.getRequestHandler()
 
+// raw express server, before using next-url-prettifier
+
 app.prepare()
   .then(() => {
     const server = express()
     server.use('/static', express.static('static'))
-
-    // server.get('*', (req, res) => {
-    //   // return handle(req, res)
-    //   return app.render(req, res, '/', req.query)
-    // })
 
     server.get('/washes', (req, res) => {
       return app.render(req, res, '/washes')
@@ -46,27 +42,8 @@ app.prepare()
     })
 
     server.get('*', (req, res) => {
-      // return handle(req, res)
       return handle(req, res)
     })
-
-    // routes.forEach((route, i) => {
-    //   console.log(route.route);
-    //   server.get(route.route, (req, res) => {
-    //     return app.render(req, res, route.route)
-    //   })
-    //   if (route.children) {
-    //     if (route.children.length > 0) {
-    //       route.children.forEach((child, j) => {
-    //         server.get(`${route.route}/:slug`, (req, res) => {
-    //           return app.render(req, res, route.route, {
-    //             slug: req.params.slug
-    //           })
-    //         })
-    //       })
-    //     }
-    //   }
-    // })
 
     server.listen(port, (err) => {
       if (err) throw err

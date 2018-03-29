@@ -2,6 +2,8 @@ const UrlPrettifier = require('next-url-prettifier').default
 const qs = require('qs')
 const NextRouter = require('next/router')
 
+// custom router a la next-url-prettifier
+
 const routes = [
   {
     page: 'index',
@@ -11,14 +13,13 @@ const routes = [
   {
     page: 'washes',
     title: 'Car Washes',
-    prettyUrl: ({ title }) => {
-      // console.log(title)
+    prettyUrl: ({ title }) => { // client
       const root = title === 'Car Washes'
       return root
         ? '/carwash/washes'
         : `/carwash/washes/${title.toLowerCase().replace(' ', '-')}`
     },
-    prettyUrlPatterns: [
+    prettyUrlPatterns: [ // server
       { pattern: '/carwash/washes/:title', defaultParams: {} }
     ],
     children: [
@@ -112,18 +113,5 @@ const Router = new UrlPrettifier(routes, {
   paramsToQueryString: (params) => params.query ? `?${qs.stringify(params.query)}` : ''
 })
 
-const ImperativeRouter = {
-  push: (path, query, shallow) =>
-    NextRouter.push(
-      {
-        pathname: `/${path}`,
-        query: query
-      },
-      Router.linkPage(path, query).as,
-      { shallow }
-    )
-}
-
 exports.routes = routes
 exports.Router = Router
-exports.ImperativeRouter = ImperativeRouter

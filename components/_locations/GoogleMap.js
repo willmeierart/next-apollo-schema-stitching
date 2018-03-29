@@ -40,8 +40,10 @@ class GoogleMap extends Component {
           streetViewControl: false,
           rotateControl: false,
           fullscreenControl: false,
-          styles: template === 'initial' ? InitialMapStyles : null
+          styles: template === 'initial' ? InitialMapStyles : null,
+          gestureHandling: 'none'
         })
+        console.log(this.map)
         if (onIdle) {
           google.maps.event.addListener(this.map, 'idle', () =>
             onIdle(this.map, markers)
@@ -55,8 +57,11 @@ class GoogleMap extends Component {
           this.setCenterViaMarkers(locData)
         } else if (template === 'initial') {
           this.setCenter('geographic center of the united states')
+
           this.map.data.loadGeoJson('/static/geoData/US_GEO.json')
-          this.map.data.setStyle({ fillColor: 'green' })
+          this.map.data.setStyle({
+            fillColor: 'red'
+          })
         }
       }
     }
@@ -195,8 +200,6 @@ class GoogleMap extends Component {
           .map-container {
             width: ${width};
             height: ${height};
-            border-radius: 3px;
-            border: 1px solid black;
           }
         `}</style>
       </div>
