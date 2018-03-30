@@ -6,9 +6,9 @@ import withData from '../lib/withData'
 class HomePage extends Component {
   render () {
     return (
-      <AppProvider title='Home'>
+      <AppProvider url={this.props.url} title='Home'>
         <div>
-          <HomeWrapper />
+          <HomeWrapper url={this.props.url} />
         </div>
         <style jsx>{`
         `}</style>

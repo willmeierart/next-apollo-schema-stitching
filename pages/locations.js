@@ -4,7 +4,7 @@ import withData from '../lib/withData'
 
 const Locations = ({ url }) => {
   return (
-    <AppProvider title='Location'>
+    <AppProvider url={url} title='Location'>
       <LocationsWrapper url={url} />
     </AppProvider>
   )

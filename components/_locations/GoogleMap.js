@@ -4,7 +4,9 @@ import MapManager from './data_managers/Map'
 import { binder } from '../../lib/_utils'
 import { getCoordsFromAddress } from './_locationUtils'
 import locData from '../../lib/_data/locData'
-// const geoJSON = require('../../lib/_data/US_GEO.json')
+// import { flip } from 'geojson-flip'
+// const geoJSON = require('/static/geoData/US_GEO.js')
+// const flippedGeoJson = flip(geoJSON)
 
 class GoogleMap extends Component {
   constructor (props) {
@@ -12,7 +14,7 @@ class GoogleMap extends Component {
     this.allMarkers = []
     this.state = {
       center: {lat: 39.8283459, lng: -98.5794797},
-      // markers: this.props.markers || [],
+      markers: this.props.markers || [],
       zoom: this.props.zoom || 4,
       bounds: null
     }
@@ -58,9 +60,13 @@ class GoogleMap extends Component {
         } else if (template === 'initial') {
           this.setCenter('geographic center of the united states')
 
+          // this.map.data.addGeoJson(flippedGeoJson)
           this.map.data.loadGeoJson('/static/geoData/US_GEO.json')
           this.map.data.setStyle({
-            fillColor: 'red'
+            fillColor: 'red',
+            fillOpacity: 1,
+            zIndex: 2,
+            strokeWeight: 1
           })
         }
       }
@@ -69,18 +75,7 @@ class GoogleMap extends Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    // if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
-    //   if (this.map.getZoom() !== this.props.zoom) {
-    //     this.map.setZoom(this.props.zoom)
-    //   }
-    //   if (JSON.stringify(prevProps.center) !== JSON.stringify(this.props.center)) {
-    //     this.map.panTo(this.props.center)
-    //   }
-    //   if (JSON.stringify(this.props.markers) !== JSON.stringify(prevProps.markers)) {
-    //     this.setMarkers()
-    //     // console.log(this.state.markers);
-    //   }
-    // }
+    console.log(this.props.markers, this.state.markers)
     if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
       this.setState({
         markers: this.props.markers || [],

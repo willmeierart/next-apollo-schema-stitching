@@ -39,9 +39,8 @@ const routes = [
     page: 'about',
     title: 'About',
     prettyUrl: ({ title }) => {
-      const root = title === 'About'
-      return root
-        ? '/carwash/about/company'
+      return title === 'About'
+        ? '/carwash/about'
         : `/carwash/about/${title.toLowerCase()}`
     },
     prettyUrlPatterns: [

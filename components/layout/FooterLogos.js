@@ -3,7 +3,7 @@ import React from 'react'
 export default ({ images }) => {
   const renderImages = images => (
     images.map(imgSrc => (
-      <div>
+      <div key={imgSrc}>
         <img key={imgSrc} src={imgSrc} alt={imgSrc} />
         <style jsx>{`
           img {

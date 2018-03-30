@@ -10,12 +10,12 @@ import Footer from '../components/layout/Footer'
 
 class App extends Component {
   render () {
-    const { title, children, pageState, onSetLocPageState } = this.props
+    const { title, children, pageState, onSetLocPageState, url } = this.props
     return (
       <div className='App'>
         {/* <Head title={title} /> */}
         <div>
-          <Header pageState={pageState} onSetLocPageState={onSetLocPageState} />
+          <Header url={url} pageState={pageState} onSetLocPageState={onSetLocPageState} />
           <main>{ children }</main>
           <Footer pageState={pageState} />
         </div>
@@ -29,6 +29,7 @@ class App extends Component {
           }
           main {
             min-height: 80vh;
+            margin-top: 120px;
           }
           a {
             text-decoration: none;

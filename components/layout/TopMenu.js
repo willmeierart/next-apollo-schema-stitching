@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'next-url-prettifier'
 import { Router, routes } from '../../server/routes'
 
-const TopMenu = ({ pageState, onSetLocPageState }) => {
+const TopMenu = ({ pageState, onSetLocPageState, url }) => {
   const renderList = () => (
     <ul>
       {
@@ -41,15 +41,14 @@ const TopMenu = ({ pageState, onSetLocPageState }) => {
                 </li>
               )
             case 'My Account' :
-              return (
+              {/* return (
                 <li key={route.title}>
                   <a href=''><span className='account'>{ route.title }</span></a>
                 </li>
-              )
+              ) */}
+              return null
             default :
-              return (
-                <li key={route.title} />
-              )
+              return null
           }
         })
       }
@@ -58,6 +57,7 @@ const TopMenu = ({ pageState, onSetLocPageState }) => {
           display: flex;
           font-size: .75em;
           margin-left: 3em;
+          justify-content: center;
         }
         li {
           margin-right: 5em;
@@ -90,7 +90,7 @@ const TopMenu = ({ pageState, onSetLocPageState }) => {
           width: 100%;
         }
         .list-wrapper{
-          width: 80%;
+          width: ${url.pathname === '/' ? '100%' : 'calc(100% - 100px)'};
         }
       `}</style>
     </div>

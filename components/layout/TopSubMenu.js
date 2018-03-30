@@ -1,23 +1,20 @@
 import { Link } from 'next-url-prettifier'
 import { Router, routes } from '../../server/routes'
+import ImperativeRouter from '../../server/ImperativeRouter'
 
 const TopSubMenu = ({ url }) => {
-  console.log(url)
   const route = routes.find(route => {
-    console.log(route)
     const matchVal = url.pathname.match(/[a-z]/g).join('')
-    console.log(matchVal)
     return route.page === matchVal
   })
-  console.log(route)
   return (
     <div className='submenu-outer'>
       <ul>
         { route.children.map(child => (
-          <li key={child.title}>
-            <Link prefetch route={Router.linkPage(route.page, { title: child.title })}>
-              <span>{ child.title }</span>
-            </Link>
+          <li key={child.title} onClick={() => {
+            ImperativeRouter.push(route.page, { title: child.title.toLowerCase().replace(' ', '-') }, false)
+          }}>
+            <span>{ child.title }</span>
           </li>
         )) }
       </ul>

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const Logo = () => (
+const Logo = ({ isHomepage }) => (
   <Link href='/'><a>
     <div className='logo-wrapper'>
       <img src='/static/images/CWUE_logo.png' alt='logo' />
@@ -8,8 +8,8 @@ const Logo = () => (
         .logo-wrapper {
           margin: 0.5em;
           border-radius: 5px;
-          width: 100px;
-          height: 100px;
+          width: ${isHomepage ? '20vw' : '100px'};
+          height: ${isHomepage ? '20vw' : '100px'};;
           display: flex;
           justify-content: center;
           align-items: center;
