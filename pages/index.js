@@ -10,7 +10,6 @@ class HomePage extends Component {
     return (
       <App url={this.props.url} title='Home'>
         <div>
-
         </div>
         <style jsx>{`
         `}</style>
