@@ -1,16 +1,20 @@
 ## active
 [] general
   [x] find out about which menu items have dropdowns - ALL
+    [x] and set that up
   [] FINISH UDEMY GRAPHQL
   [] implement proptypes
   [] clean up && comment code
+  [] start using google tools to be checking:
+    [] pagespeed
+    [] seo indexing
 
 [] locations 
   [x] work out routing completely
     [] make sure query strings parseable - DOESN'T NEED TO SSR
     [] make sure everything actually being SSR'd
   [] maps
-    [] restrict api key
+    [x] restrict api key
     [] get working on serverside - DOES IT NEED TO?
     [] deal with automatic bounds / markers / etc
     [] get working with indirect search (markers)

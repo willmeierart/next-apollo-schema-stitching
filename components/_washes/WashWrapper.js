@@ -6,7 +6,7 @@ import WashFastPassCallout from './WashFastPassCallout'
 import { binder } from '../../lib/_utils'
 
 class AboutWrapper extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       type: 'exterior-washes' // exterior-washes || full-service || express-detail || fleet-accounts || specials
@@ -24,8 +24,10 @@ class AboutWrapper extends Component {
   }
 
   setPageStateViaUrl () {
-    const { title } = this.props.url.query
-    this.setState({ type: title }, () => { console.log(this.state.type) })
+    const { query: { title }, asPath, pathname } = this.props.url
+    const splitPath = asPath.split(`${pathname}/`)
+    const backupTitle = splitPath[splitPath.length - 1]
+    this.setState({ template: title || backupTitle })
   }
 
   render () {

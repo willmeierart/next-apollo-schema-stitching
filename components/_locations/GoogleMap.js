@@ -79,8 +79,8 @@ class GoogleMap extends Component {
     if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
       this.setState({
         markers: this.props.markers || [],
-        zoom: this.props.zoom || 8,
-        center: this.props.center
+        zoom: this.props.zoom || 8
+        // center: this.props.center
       })
     }
     if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {

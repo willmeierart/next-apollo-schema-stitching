@@ -24,8 +24,10 @@ class AboutWrapper extends Component {
   }
 
   setPageStateViaUrl () {
-    const { title } = this.props.url.query
-    this.setState({ template: title })
+    const { query: { title }, asPath, pathname } = this.props.url
+    const splitPath = asPath.split(`${pathname}/`)
+    const backupTitle = splitPath[splitPath.length - 1]
+    this.setState({ template: title || backupTitle })
   }
 
   render () {

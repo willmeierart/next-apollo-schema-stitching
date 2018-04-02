@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.8",
+    "apollo-link": "^1.2.1",
     "autoprefixer": "^7.2.6",
     "axios": "^0.18.0",
     "babel-plugin-module-resolver": "^3.1.0",
@@ -36,6 +37,7 @@
     "graphql": "^0.11.7",
     "graphql-anywhere": "^4.1.5",
     "graphql-tag": "^2.7.3",
+    "graphql-tools": "^2.23.1",
     "isomorphic-fetch": "^2.2.1",
     "loaders.css": "^0.1.2",
     "lodash.debounce": "^4.0.8",
