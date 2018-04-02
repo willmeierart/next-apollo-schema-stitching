@@ -1,7 +1,2 @@
-#  Carwash USA Express 
-
-##  First of iterative suite of ICWG carwash sites 
-
-developed by Will Meier at Agency Zero 
-
-😎
+# tester to get schema stitching working
+## made for next.js / apollo / graphcms config

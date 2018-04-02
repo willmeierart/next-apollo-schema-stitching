@@ -1,20 +1,28 @@
 import React, { Component } from 'react'
-import AppProvider from '../lib/redux/AppProvider'
-import HomeWrapper from '../components/_home-global/HomeWrapper'
-import withData from '../lib/withData'
+import { graphql, compose } from 'react-apollo'
+import App from '../components/App'
+import withData from '../lib/apollo/withData'
+import { allPosts } from '../lib/apollo/queries'
 
 class HomePage extends Component {
   render () {
+    console.log(this.props)    
     return (
-      <AppProvider url={this.props.url} title='Home'>
+      <App url={this.props.url} title='Home'>
         <div>
-          <HomeWrapper url={this.props.url} />
+
         </div>
         <style jsx>{`
         `}</style>
-      </AppProvider>
+      </App>
     )
   }
 }
 
-export default withData(HomePage)
+export default withData(
+  compose(
+    graphql(allPosts, { name: 'allPosts' })
+  )(HomePage)
+)
+
+// export default HomePage
