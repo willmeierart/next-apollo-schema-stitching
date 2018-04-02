@@ -1,27 +1,19 @@
-import React, { Component } from 'react'
-import { graphql, compose } from 'react-apollo'
+import React from 'react'
+// import { graphql, compose } from 'react-apollo'
 import App from '../components/App'
-import withData from '../lib/apollo/withData'
-import { allPosts } from '../lib/apollo/queries'
+// import withData from '../lib/apollo/withData'
+// import { allPosts } from '../lib/apollo/queries'
 
-class HomePage extends Component {
-  render () {
-    console.log(this.props)    
-    return (
-      <App url={this.props.url} title='Home'>
-        <div>
-        </div>
-        <style jsx>{`
-        `}</style>
-      </App>
-    )
-  }
-}
-
-export default withData(
-  compose(
-    graphql(allPosts, { name: 'allPosts' })
-  )(HomePage)
+const HomePage = ({ url, children }) => (
+  <App url={url}>
+    <div>{children}</div>
+  </App>
 )
 
-// export default HomePage
+// export default withData(
+//   compose(
+//     graphql(allPosts, { name: 'allPosts' })
+//   )(HomePage)
+// )
+
+export default HomePage
