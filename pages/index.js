@@ -1,19 +1,17 @@
 import React from 'react'
-// import { graphql, compose } from 'react-apollo'
-import App from '../components/App'
-// import withData from '../lib/apollo/withData'
-// import { allPosts } from '../lib/apollo/queries'
+import { graphql } from 'react-apollo'
+import withData from '../lib/withData'
+import { allPosts } from '../lib/queries'
 
-const HomePage = ({ url, children }) => (
-  <App url={url}>
-    <div>{children}</div>
-  </App>
+const HomePage = props => {
+  console.log(props)
+  return (
+    <div>o</div>
+  )
+}
+
+export default withData(
+    graphql(allPosts)(HomePage)
 )
 
-// export default withData(
-//   compose(
-//     graphql(allPosts, { name: 'allPosts' })
-//   )(HomePage)
-// )
-
-export default HomePage
+// export default HomePage
